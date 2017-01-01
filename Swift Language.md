@@ -1028,7 +1028,7 @@ Objective-C에서는 클래스의 메서드를 호출하거나 프로퍼티를 �
 
 ### [Curried Function](https://gist.github.com/monadis/12f50b36fae32a065794)
 
-![curried function](./curried function.jpg)
+![curried function](./images/curried function.jpg)
 
 
 
@@ -1064,7 +1064,7 @@ Objective-C에서는 클래스의 메서드를 호출하거나 프로퍼티를 �
 2. CI는 같은 클래스 내의 다른 생성자를 호출한다.
 3. CI는 결과적으로는 DI를 호출하게 되어있다.
 
-![생성자 체인 규칙](./생성자 체인 규칙.jpg)
+![생성자 체인 규칙](./images/생성자 체인 규칙.jpg)
 
 >  위의 도식은 위임관계를 말하는것이지 상속(override) 관계가 아니다. 착각하지말자. subclass의 CI가 superclass의 DI를 override해도 상관이 없다.
 

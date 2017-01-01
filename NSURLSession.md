@@ -15,7 +15,7 @@ Data URLs (data://)
 
 이 시스템은 아래와 같이 다섯 부분으로 구성됨 
 
-![URL Loading helper classes](./nsobject_hierarchy_2x.png)
+![URL Loading helper classes](./images/nsobject_hierarchy_2x.png)
 
 데이터는 메모리로 받는(NSData 객체로) 방법이 있고 파일로 받는방법이 있다.
 
