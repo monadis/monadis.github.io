@@ -41,11 +41,11 @@ T는 그냥 다른 문자열로 바꿔도 상관없다. 대문자로 시작하�
 
 <U where U : Equatable > 은  <U : Equatable>로 간략화가 가능하다.
 
-![generics1](/Users/monadis/Dropbox/Swift/generics1.jpg)
+![generics1](./generics1.jpg)
 
 enum 타입도 가능
 
-![generics2](/Users/monadis/Dropbox/Swift/generics2.jpg)
+![generics2](./generics2.jpg)
 
 **Generic Structures**
 
@@ -297,7 +297,7 @@ let phi = fibonacci(45) / fibonacci(44)    //  빠른 컴퓨터에서도 계�
 
 계산이 느린 이유는 이미 계산한 것을 반복해서 또 계산하는 recursive 계산구조 때문임.
 
-![피보나치](/Users/monadis/Dropbox/Swift/피보나치.jpg)   
+![피보나치](./피보나치.jpg)   
 
 fib(1)은 5번 fib(2)는 3번이나 계산됨. 
 
