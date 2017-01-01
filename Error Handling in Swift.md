@@ -11,19 +11,16 @@ https://andybargh.com/error-handling-in-swift/#Recoverable_Error_Conditions
 -   내부 에러 : 코드 논리 구조에 문제가 있어 발생하는 에러. 로직 에러라고도 한다. assert문 등을 이용해서 잡아낸다. 
 -   외부 에러: 현재 스코프의 코드는 이상이 없는데 외부조건이나 입력값의 잘못으로 인해 발생하는 에러다. 외부에서 처리해야 하므로 throw error 혹은 리턴값을 통해 에러가 났음을 알려준다.
 
-
-  #### Logical Error Conditions
-
+####Logical Error Conditions
 객체가 있어야 할 곳에 nil이라거나, 배열의 out of range 인덱스에 접근하는 등 논리적인 오류가 발생한 경우. 결과적으로 앱 크래시가 일어남. 
 
-  #### Simple Error Conditions
-
+####Simple Error Conditions
 ```swift
   let value : Int? = Int("Hello") // nil
 ```
   에러 발생시 그 이유가 명백한 에러. Optional을 이용하여 에러를 처리하면 됨.
 
-  #### Recoverable Error Conditions
+####Recoverable Error Conditions
   몇몇 에러들은 대응 코드를 실행하거나 사용자에게 해결방법을 알려줌으로써 해결이 가능하다. 
 
 ## 복구 가능한 에러를 다루는 법
