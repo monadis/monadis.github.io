@@ -76,7 +76,7 @@ guard 구문을 이용해 에러가 발생할 사전 조건을 미리 검사하�
 
 
 
-#### Result Type을 이용한 방법
+#### Result Type을 이용한 방법 (비동기 함수에서 사용)
  에러 목록을 enum에 작성한다. 
 ```swift
 enum FileError : ErrorProtocol {
