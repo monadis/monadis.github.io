@@ -4,7 +4,7 @@
 
 ### debugging panel
 
-![debugging panel](./images/스크린샷 2017-01-04 오후 4.38.14.jpg)
+![debugging panel](./images/2017-01-04_4.38.14.jpg)
 - L = Local variable
 - A = Argument
 - S = Static variable
