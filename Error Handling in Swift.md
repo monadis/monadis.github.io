@@ -127,7 +127,25 @@ case let .failure(error):
 
 
 
+## 에러 검출 방법
 
+- early return을 이용한 방법: [guard clause](http://wiki.c2.com/?GuardClause)
+
+  > ...[G]uards are similar to assertions in that both protect the subsequent code from special cases. Guards differ from assertions in that they make a tangible contribution to the logic of the method and thus cannot be safely omitted as part of an optimization.   -- explained by Ward Cunningham
+
+  - Optional의 nil을 리턴: 값이 존재하지 않는다의 의미로 사용됨. 해당 값의 의미가 한개뿐이며 명확할때만 사용.
+  - 특수값을 리턴. :  해당 리턴값의 의미가 명백할때만 사용.
+  - throw error. : 다양한 에러를 표현
+
+- assert() : 노파심에 확인해보는 조건문을 넣고싶을때 사용하자. 지워져도 상관없는 테스트코드. 이 코드는 사실상 군더더기에 불과하므로 유닛테스트 코드로 이전시켜야 한다. 또한 assert문을 통해 필수 컨티션들을 찾아낼수 있는데 이것들은 guard clause로 변경시키면 된다.
+
+- precondition() : assert와 비슷한데 배포코드에서도 작동한다는 점이 다르다. 
+
+- [fatalError()](https://cocoacasts.com/what-is-fatalerror-in-swift-and-when-to-use-it/) : 치명적인 에러. 남용하지 말자. 가능하면 throw error방식으로 하자.
+
+  > 배열의 out of bound index error같은 것이 fatalError로 구현되어있다. 주로 데이터 API를 만들때 사용하자. throw-catch를 이용해 구현하면 쓰기가 불편하고 비교적 느리기때문에 fatalError()로 처리하는거 같다.
+
+- print() : 로깅용. 에러가 난 위치의 상황 정보를 알려주기 위해 사용. 에러가 발생할 법한 위치에서는 해당 위치의 변수값을 출력하는 로깅을 빼곡히 해주는게 좋다. 디버깅 시간을 줄일수 있다.
 
 
 

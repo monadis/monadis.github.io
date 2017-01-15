@@ -1,4 +1,4 @@
-## XCode
+# Debugging with Xcode
 
 
 
@@ -22,7 +22,7 @@
 - REPL : 코드 집어넣기
 - playground : 코드를 실험해보기
 
-###Playground
+##Playground
 
 ####[작성방법 참고 사이트](http://hiddenviewer.tistory.com/272)
 
@@ -71,7 +71,7 @@ NSObject의 서브클래스만 가능. debugQuickLookObject()메소드를 구현
 
 
 
-### REPL (Read-Eval-Print-Loop)
+##REPL (Read-Eval-Print-Loop)
 
 https://developer.apple.com/swift/blog/?id=18
  디버깅중에도 자유롭게 함수를 만들어 실행시킬수 있게해줌. 즉, 테스트 코드를 만들어서 실행해볼수 있게 해주는 기술. 빌드 횟수를 줄일수 있다. Playground는 실제 런타임의 상태와 동일한 상황을 만들어 실행해보기 어렵다는 점이 가장 큰 단점인데 REPL은 이를 보완한다.
