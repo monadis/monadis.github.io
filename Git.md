@@ -162,19 +162,38 @@
 
 
 
+### 주요 파일들
+
+- .gitignore : 저장소 차원에서 무시
+
+- .git/info/exclude : 자신의 컴퓨터에서만 무시
+
+- .gitconfig : Git은 ".gitconfig" 파일에 전역 환경설정내용을 저장하고 있다. 이 파일은 사용자의 홈 디렉토리에 있으며 사용자와 비밀번호 혹은 소스코드 글자색상등을 수정할 수 있다.
+
+  ```shell
+  git config --global user.name "Lars Vogel"
+  git config --global user.email "Lars.Vogel@gmail.com"
+  git config --list  # 모든 설정사항 확인
+  ```
+
+### 
+
 #### 과거로 되돌리는데 있어 Reset, Checkout, Revert의 차이
 
 딱 한개의파일만 과거시점으로 되돌릴 경우
 
-- $ git checkout -- filename        <--- 해당 인덱스의 위치의 파일상태로 되돌림. discard changes됨.
-- $ git checkout HEAD filename       <--- 헤드 위치의 파일상태로 되돌림. 즉 해당 파일이 HEAD 커밋 시점이었을때의 상태가 됨.
+```shell
+$ git checkout -- filename       # 해당 인덱스의 위치의 파일상태로 되돌림. discard changes됨.
+$ git checkout HEAD filename     # 헤드 위치의 파일상태로 되돌림. 즉 해당 파일이 HEAD 커밋 시점이었을때의 상태가 됨.
+```
 
 2단계 전 과거 상태로 커밋을 되돌리기
 
-1. $ git revert -n HEAD         : 헤드를 되돌림. -n 옵션은 자동으로 이뤄지는 커밋을 안하게 하는것. 여러개의 커밋을 한꺼번에 되돌릴때는 -n을 이용하자.
-2. $ git revert -n 540ecb7      : 헤드를 되돌린 후 커밋 하나를 추가로 되돌렸다. 이제 2단계 이전의 커밋상태로 돌아간 셈이다.
-3. $ git commit -m "reverted HEAD and 540ecb7"      : 이제 커밋만 하면 된다.
-
+```shell
+1. $ git revert -n HEAD         # 헤드를 되돌림. -n 옵션은 자동으로 이뤄지는 커밋을 안하게 하는것. 여러개의 커밋을 한꺼번에 되돌릴때는 -n을 이용하자.
+2. $ git revert -n 540ecb7      # 헤드를 되돌린 후 커밋 하나를 추가로 되돌렸다. 이제 2단계 이전의 커밋상태로 돌아간 셈이다.
+3. $ git commit -m "reverted HEAD and 540ecb7"      # 이제 커밋만 하면 된다.
+```
 
 
 
@@ -202,18 +221,6 @@ Git에서는pull이라 하고, Subversion에서는 update라 한다.
 #### [특정파일의 변경 히스토리를 보는 법](http://www.shellhacks.com/en/Git-The-Change-History-of-a-Specific-File) 
 소스트리에서 해당 파일을 클릭후 Log Selected를 선택해도 된다.
 
-
-
-
-
-### 주요 파일들
-
-- .gitignore : 저장소 차원에서 무시
-- .git/info/exclude : 자신의 컴퓨터에서만 무시
-- .gitconfig : Git은 ".gitconfig" 파일에 전역 환경설정내용을 저장하고 있다. 이 파일은 사용자의 홈 디렉토리에 있으며 사용자와 비밀번호 혹은 소스코드 글자색상등을 수정할 수 있다.
-  - git config - -global [user.name](http://user.name) "Lars Vogel”
-  - git config - -global user.email "Lars.Vogel@gmail.com”
-  - git config - -list  : 모든 설정사항 확인
 
 
 
@@ -319,14 +326,36 @@ rebase를 하면 fast-foward 옵션이 자동으로 적용되어 병합 브랜�
 
 ### Git-flow
 
-1. develop : 개발의 메인 줄기이지만 이곳은 병합용도로만 쓰인다. 직접커밋해서는 안됨.
-2. feature : 기능개발용 브랜치. 각 브랜치는 하나의 기능만을 구현하는 내용만을 커밋해야 한다. 
-3. release : 최적화 작업, 배포와 관련된 코딩을 함. 버그수정도 함.  수정된 내용은 develop에 반영시킴.
-4. master : 배포용 브랜치. 각 커밋은 버전이 붙음. 
-5. hotfix : 이미 배포된 코드에서 버그가 발생된 경우 이를 수정하기 위한 브랜치.
+ SourceTree의 Git-Flow는 branch들을 체계화하여 효과적으로 사용할수 있게 해주는 툴이다. (⚠️이때 각 플로우의 명칭에는 공백문자가 없어야 한다. 그렇지 않으면 flags:FATAL the available getopt does not support spaces in options와 같은 에러가 발생한다.)
+
+#### development branch
+
+차기 릴리즈를 위한 주 브랜치다. 프로그램의 근간이 되는 작업들은 대부분 여기서 한다.
+
+#### master branch
+
+가장 최근에 릴리즈/배포 된 코드를 이곳에 놓는다. 따라서 master에서는 직접 commit이 이뤄지지는 않고 오로지 다른 브랜치의 merge만 이뤄진다.
+
+#### feature branch
+
+기능 단위의 브랜치다. 실험적인코드를 작성할때 만드는 experiment branch도이것의일종이다. 여기서 완성된 기능은 develop에 merge한다. 이 때 git의 rebase기능을 이용하면 편하다. merge와 해당브랜치 삭제 까지 동시에 한다.
+
+#### release branch
+
+master branch가 있는데 왜 릴리즈 브랜치가 따로 필요한 걸까? 소프트웨어의 개발과정은 릴리즈의 반복이다. 완성품을 내놓고 끝이 아니라 미완성품을 내놓고 반복적으로 업데이트를 하는 식으로 서비스가 제공되는 것이다. 따라서 미완성품을 완성품처럼 보이게 다듬어서 릴리즈해야 한다. 또, 다듬는 와중에 다른 누군가가 이 브랜치에 새 기능을 넣어버리면 안될것이다. 따라서 릴리즈 브랜치는 별도로 분리시킨것이다.  이 브랜치에서 코딩하는 동안 발견한 버그 등은 master 및 develop브랜치로 merge시킬수 있다. 
+
+#### hotfix branch
+
+릴리즈 버전에 대한 특별한 개선을 위한 브랜치다. 핫픽스는 특정 고객을 위한 업데이트를 의미한다. 특정 소프트웨어와 연동하여 작업하는 경우에만 버그가 발생한다던지 하는 경우 그 고객만을 위하여 선택적으로 업데이트할 필요가 있다. 핫픽스는 일반적인 업데이트와는 달리 언인스톨이 가능한 경우가 많다. 또한, 핫픽스를 긴급 업데이트라는 의미로 사용하기도 한다. 정식 업데이트를 기다리기에는 시간이 너무 오래 걸리는 경우 이 핫픽스를 배포한다.
+
+
 
 ![Imgur](http://i.imgur.com/AdN9neQ.png)
 ![Imgur](http://i.imgur.com/Obfh0ua.png)
+
+
+
+
 
 
 
@@ -427,39 +456,37 @@ xcodeproj파일이 있는 폴더로 가서 .git 디렉토리를 폴더째로 삭
 
 #### 개별파일 원복
 
-git checkout  -- <파일> : 워킹트리의 수정된 파일을 index에 있는 것으로 원복
-
-git checkout HEAD -- <파일명> : 워킹트리의 수정된 파일을 HEAD에 있는 것으로 원복(이 경우 --는 생략가능)
-
-git checkout FETCH_HEAD -- <파일명> : 워킹트리의 수정된 파일의 내용을 FETCH_HEAD에 있는 것으로 원복? merge?(이 경우 --는 생략가능)
+```shell
+git checkout  -- <파일> #워킹트리의 수정된 파일을 index에 있는 것으로 원복
+git checkout HEAD -- <파일명> #워킹트리의 수정된 파일을 HEAD에 있는 것으로 원복(이 경우 --는 생략가능)
+git checkout FETCH_HEAD -- <파일명> #워킹트리의 수정된 파일의 내용을 FETCH_HEAD에 있는 것으로 원복? merge?(이 경우 --는 생략가능)
+```
 
 #### index 추가 취소
 
-git reset -- <파일명> : 해당 파일을 index에 추가한 것을 취소(unstage). 워킹트리의 변경내용은보존됨. (--mixed 가 default)
-
-git reset HEAD <파일명> : 위와 동일
+```shell
+git reset -- <파일명> # 해당 파일을 index에 추가한 것을 취소(unstage). 워킹트리의 변경내용은보존됨. (--mixed 가 default)
+git reset HEAD <파일명> # 위와 동일
+```
 
 #### commit 취소
 
-git reset HEAD^ : 최종 커밋을 취소. 워킹트리는 보존됨. (커밋은 했으나 push하지 않은 경우 유용)
-
-git reset HEAD~2 : 마지막 2개의 커밋을 취소. 워킹트리는 보존됨.
-
-git reset --hard HEAD~2 : 마지막 2개의 커밋을 취소. index 및 워킹트리 모두 원복됨.
-
-git reset --hard ORIG_HEAD : 머지한 것을 이미 커밋했을 때,  그 커밋을 취소. (잘못된 머지를 이미 커밋한 경우 유용)
-
-git revert HEAD : HEAD에서 변경한 내역을 취소하는 새로운 커밋 발행(undo commit). (커밋을 이미push 해버린 경우 유용)
+```shell
+git reset HEAD^ # 최종 커밋을 취소. 워킹트리는 보존됨. (커밋은 했으나 push하지 않은 경우 유용)
+git reset HEAD~2 # 마지막 2개의 커밋을 취소. 워킹트리는 보존됨.
+git reset --hard HEAD~2 # 마지막 2개의 커밋을 취소. index 및 워킹트리 모두 원복됨.
+git reset --hard ORIG_HEAD # 머지한 것을 이미 커밋했을 때,  그 커밋을 취소. (잘못된 머지를 이미 커밋한 경우 유용)
+git revert HEAD # HEAD에서 변경한 내역을 취소하는 새로운 커밋 발행(undo commit). (커밋을 이미push 해버린 경우 유용)
+```
 
 #### 워킹트리 전체원복
 
-git reset --hard HEAD : 워킹트리 전체를 마지막 커밋 상태로 되돌림. 마지막 커밋이후의 워킹트리와 index의 수정사항 모두 사라짐. 
-
+```shell
+git reset --hard HEAD # 워킹트리 전체를 마지막 커밋 상태로 되돌림. 마지막 커밋이후의 워킹트리와 index의 수정사항 모두 사라짐. 
                                   (변경을커밋하지 않았다면 유용)
-
-git checkout HEAD . : ??? 워킹트리의 모든 수정된 파일의 내용을 HEAD로 원복.
-
-git checkout -f : 변경된 파일들을 HEAD로 모두 원복(아직 커밋하지 않은 워킹트리와 index 의 수정사항 모두 사라짐. 신규추가 파일 제외)
+git checkout HEAD . # ??? 워킹트리의 모든 수정된 파일의 내용을 HEAD로 원복.
+git checkout -f # 변경된 파일들을 HEAD로 모두 원복(아직 커밋하지 않은 워킹트리와 index 의 수정사항 모두 사라짐. 신규추가 파일 제외)
+```
 
 #### svn checkout을 통해 웹상의 오픈소스를 받을때
 
@@ -550,7 +577,13 @@ git rm --cached test.txt
 - /usr/bin/git은 xcode가 쓰는 버전의 git이다. 이것은 오래된 버전이다.  /usr/local/git/bin/git  위치에 새버전의 git이 있다.
 - github는 원격저장소로 쓰기엔 소스가 다 공개되어버려서 힘들다. bitbucket에서는 5개까지의 비공개 repository를 허용하므로 이를 사용해도 된다. 단, 개인프로젝트는 드롭박스가 좋다.
 - 다른 버전컨트롤 시스템과는 달리 Git는 커밋한다고 해서 모든 코드를 복사하여 저장소에 넣지 않는다. index를 이용하여 갱신된 부분만을 넣게 된다. 
+- UserInterfaceState.xcuserstate를 ignore 하는 법
+  http://stackoverflow.com/a/24746250
 - ​
+
+
+
+
 
 
 
@@ -585,7 +618,23 @@ Name에Dropbox입력, Path에 [file:///Users/monadis/Dropbox/gitrepo/task.git](u
 
 만약 배포나 다른작업자와의 공동작업을 위해 원격 저장소가 필요한경우는 웹호스팅에 하나의 Git 저장소를 만든후 ssh 이용해서 remote 저장소로 등록하면 된다.
 
-  
+
+###Naming 규칙
+####commit message naming
+[카테고리] - [간단한 메시지]
+카테고리에는 fix, add, mod, rm 가 있음. 버그수정, 기능추가, 기능변경, 기능제거 등을 의미함.
+
+####branch naming
+슬래시 기호를 이용
+feat/foo  : foo라는 이름의 새 기능을 추가
+fix/critical-thing   : critical-thing에 대한 버그를 수정
+test/awesome-new-library    : awesome-new-library를 테스트
+
+####버전
+버전의 숫자가 x.y.z 일때
+x는 기존 버전과 호환이 되지않는 변경
+y는 호환이 되며 새로운기능 추가일때
+z는 버그수정
 
 
 
@@ -597,23 +646,23 @@ Name에Dropbox입력, Path에 [file:///Users/monadis/Dropbox/gitrepo/task.git](u
 - fork 버튼의 우측의 숫자풍선을 클릭하자. network graph를 잘보고 커밋의 내용을 살펴보면서 나에게 적당한 버전을 찾아야 한다.
 - safari에서는 github의 network graph가 제대로 다 보이지 않음. 크롬을 이용하자.
 - issue
-- - 현재 개발고려중인 이슈를 알수 있다. 
+  - 현재 개발고려중인 이슈를 알수 있다. 
   - 여기 존재하지 않는 건에 대해 새로운 기여를 하고자한다면 이슈글을 올려보자. 개발자들로부터 조언을 받을수 있고 반복된 시행착오를 안할수있다.
 - fork
-- - fork의 변경사항을 오리지날 저장소에도 적용하고 싶으면 pull request를 해야하고 거절당하지 않아야 한다. 
+  - fork의 변경사항을 오리지날 저장소에도 적용하고 싶으면 pull request를 해야하고 거절당하지 않아야 한다. 
   - fork는 복사본이 아니다. 파생본이다. clone은 원본소스에 대해 읽기권한만 주어지는 반면 fork는 쓰기도 가능하다. 이렇게 하는 이유는 함부로 서버상의 소스를 수정할수 없게 하기 위함이다. fork를 안하고 바로 clone을 하면 서버상의 소스에 대해서 read-only가 된다. 로컬에서 변경은 시킬수 있지만 이 변경내용이 리모트의 소스에 적용되지는 않는다는 의미다. 만약 소스를 수정해서 쓰고싶고 또한 수정된 소스를 모두와 공유하고 싶다면 fork를 이용하자.
 - SSH 주소
-- - https가 아닌 [git@github.com](mailto:git@github.com): 으로 시작되는 주소.
-  -  SSH 주소를 사용한 것은 git 프로토콜이 HTTPS보다 훨씬 빠르고 Github에 SSH키를 등록해 놓으면 푸시할때 암호를 입력하지 않아도 되기 때문이다.
+  - https가 아닌 [git@github.com](mailto:git@github.com): 으로 시작되는 주소.
+  - SSH 주소를 사용한 것은 git 프로토콜이 HTTPS보다 훨씬 빠르고 Github에 SSH키를 등록해 놓으면 푸시할때 암호를 입력하지 않아도 되기 때문이다.
 - upstream과 downstream의 개념 : [http://stackoverflow.com/a/2749166/2047287](http://stackoverflow.com/a/2749166/2047287)
-- - server와 client개념과 유사하지만 상대적인 면에 초점을 맞춘 개념이다. 상류가 하류에 영향을 미치지만 하류도 때에따라서는 상류가 되어 다른 하류에 영향을 미치게 된다.
+  - server와 client개념과 유사하지만 상대적인 면에 초점을 맞춘 개념이다. 상류가 하류에 영향을 미치지만 하류도 때에따라서는 상류가 되어 다른 하류에 영향을 미치게 된다.
   - upstream과 origin의 차이 : [http://stackoverflow.com/a/9257901/2047287](http://stackoverflow.com/a/9257901/2047287)
 
- 
 
 
 
-#### Github.app 사용법
+
+#### Github.app
 
 ![Imgur](http://i.imgur.com/1mIwOR7.png)
 
@@ -646,4 +695,32 @@ Github앱으로 Merge하는방법
 ![Imgur](http://i.imgur.com/XsiixhU.png)
 
 위처럼 우측에 마스터를 놓고 좌측에 merge할 브랜치를 드래그해서 놓는다. 머지 후에는 Sync를 눌러야 리모트에 올라간다.
+
+
+
+#### Github의 커밋 삭제하기
+
+터미널창에 아래와 같이 입력하면 리모트(깃허브)의 커밋이 하나 삭제된다. (두개를 삭제하려면 HEAD^^ 로 바꾸면 된다.)
+
+```shell
+git push -f origin HEAD^:master
+```
+
+
+SourceTree를 이용하여 로컬에서도 해당 커밋위치로 soft reset을 해주면된다.
+
+
+http://stackoverflow.com/a/449070
+
+
+#####github desktop 어플을 이용하는 방법
+단, 이 방법은 위와는 달리 커밋을 삭제하는게 아니다. revert를 하는것이다. 즉, 역 커밋을 넣음으로써 원상복구하는 방식으므로 이미 다른 유저가 해당코드를 포크했을때 유용하다.
+
+![Imgur](http://i.imgur.com/2yrmbo7.jpg)
+
+
+
+
+
+
 
