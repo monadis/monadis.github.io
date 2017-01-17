@@ -300,11 +300,11 @@ Git에서는pull이라 하고, Subversion에서는 update라 한다.
 
 #### 다수의 브랜치 병합하기 (rebase 사용)
 
-![Imgur](http://i.imgur.com/yrACBrr.jpg)
+![md image](./images/merge1.jpg)
 
 위처럼 브랜치들이 존재할때 이를 마스터로 병합하려면 우선 hotfix1부터 차례로 rebase해야한다.
 
-![Imgur](http://i.imgur.com/6j8fHSX.jpg)
+![md image](./images/merge2.jpg)
 
 이때 충돌이 발생하면 수작업으로 이를 해결해주자.
 
@@ -320,9 +320,7 @@ rebase를 하면 fast-foward 옵션이 자동으로 적용되어 병합 브랜�
 > git merge hotfix1 --no-ff
 ```
 
-![Imgur](http://i.imgur.com/1cHdx0N.jpg)
-
-
+![md image](./images/merge3.jpg)
 
 ### Git-flow
 
@@ -350,8 +348,8 @@ master branch가 있는데 왜 릴리즈 브랜치가 따로 필요한 걸까? �
 
 
 
-![Imgur](http://i.imgur.com/AdN9neQ.png)
-![Imgur](http://i.imgur.com/Obfh0ua.png)
+![md image](./images/Evernote Snapshot 20161007 183214.png)
+![md image](./images/Evernote Snapshot 20161007 182508.png)
 
 
 
@@ -447,7 +445,9 @@ git commit -m "Initial commit"
 
 위를 실행 후 다음과 같이 xcode 세팅
 
-![Imgur](http://i.imgur.com/Osxi3Kd.png)
+![md image](./images/xcode git enable.jpg)
+
+
 
 #### Git 삭제
 
@@ -664,11 +664,11 @@ z는 버그수정
 
 #### Github.app
 
-![Imgur](http://i.imgur.com/1mIwOR7.png)
+![md image](./images/1mIwOR7.png)
 
 - 원하는 저장소를 Fork한다.
 
-![Imgur](http://i.imgur.com/rmCrwUx.png)
+![md image](./images/rmCrwUx.png)
 
 버튼을누르면 자동으로 Github.app이 론칭되며 원하는 경로를 설정해주면 클로닝된다. 버튼을 눌러도 클로닝이 안된다면 Github앱을 다시 깔거나 업데이트를 해보자.
 
@@ -684,7 +684,7 @@ z는 버그수정
 
 새 브랜치를 만들려면 current branch의 + 버튼을누른다.
 
-![Imgur](http://i.imgur.com/RaGKvZD.png)
+![md image](./images/RaGKvZD.png)
 
 다른 브랜치로 이동하려면 해당 브랜치를 더블클릭 한다.
 
@@ -692,7 +692,7 @@ z는 버그수정
 
 Github앱으로 Merge하는방법
 
-![Imgur](http://i.imgur.com/XsiixhU.png)
+![md image](./images/XsiixhU.png)
 
 위처럼 우측에 마스터를 놓고 좌측에 merge할 브랜치를 드래그해서 놓는다. 머지 후에는 Sync를 눌러야 리모트에 올라간다.
 
@@ -716,7 +716,7 @@ http://stackoverflow.com/a/449070
 #####github desktop 어플을 이용하는 방법
 단, 이 방법은 위와는 달리 커밋을 삭제하는게 아니다. revert를 하는것이다. 즉, 역 커밋을 넣음으로써 원상복구하는 방식으므로 이미 다른 유저가 해당코드를 포크했을때 유용하다.
 
-![Imgur](http://i.imgur.com/2yrmbo7.jpg)
+![md image](./images/ss1.jpg)
 
 
 
