@@ -14,12 +14,12 @@
 #### Typealias
 Swift에서는 typedef 대신 typealias 키워드를 사용합니다. 이미 존재하는 타입을 이용해서 새로운 타입을 만들수 있다. typealias를 이용하자.
 ```swift
-	typealias AudioSample = UInt16        // UInt16 보다 더 직관적이고 버그도 방지된다.
+typealias AudioSample = UInt16        // UInt16 보다 더 직관적이고 버그도 방지된다.
 ```
 typealias를 이용해서 tuple타입에 이름을 정해줄수 있다. 
 ```swift
-	typealias Point = (Int, Int)
-	let origin: Point = (0, 0)
+typealias Point = (Int, Int)
+let origin: Point = (0, 0)
 ```
 
 
@@ -106,6 +106,10 @@ guard문의 등장으로 인해 early return 방식의 코딩이 대세가 되�
 **여러개의 defer 블록을 쓴다면 각 블록들은 코드상 순서의 역순으로 실행된다는점을 유의하자. 또한 코드  가독성을 해칠수 있으니 남용하지말자. **
 
 
+
+### AssociatedType & Generics
+
+
 #### NSInvocation 및 NSMethodSignature 의 대안
 Swift에서는 NSMethodSignature 나 NSInvocation 같은 클래스를 사용하지 않는데 대신에 연관타입을 이용한다.
 
@@ -120,6 +124,8 @@ https://gist.github.com/monadis/36dc47b68746815f9be95bcc22c94554
 http://stackoverflow.com/questions/26554987/why-dont-associated-types-for-protocols-use-generic-type-syntax-in-swift
 연관타입이 훨씬 유연하다. Java 의 Scala언어로부터 차용됨. 
 예들들어 ```Array<String, Int, Generator<String>>``` 는 ``` Array<String, Int, Generator<String>>``` 끼리만 호환이 되지만 연관타입을 이용하면 내부적으로 타입이 달라도 호환이 가능.
+
+
 
 #### Reflection, Introspection
 
@@ -192,20 +198,21 @@ dump(CGRect.zeroRect)
 https://gist.github.com/monadis/e5a3b26c5b5310b30c581be5d7ba3135?ts=4
 위와같은 dump()함수가 다양한 객체를 받아 유사하게 작동할수 있는것는 미러타입 때문이다.	
 
-#### @noescape 
-해당 함수의 Lifetime보다 더 오래 살 수 없는 클로져블록. 
-기존의 클로져는 함수 자체보다 더 오래 살아남아서 의도치않은 작업을 하기도 하였음. 단순히 코드의 일부를 외부에서 받고자 클로저를 사용하는 경우에는 이런 부작용을 사전에 차단하기위한 장치가 필요함. 
-noescape클로져는 async디스패치로 전달이 불가하며 변수로 저장도 불가함. 내부에 self키워드를 쓸필요가 없어짐.
+#### ~~@noescape~~ 
+~~해당 함수의 Lifetime보다 더 오래 살 수 없는 클로져블록.~~ 
+~~기존의 클로져는 함수 자체보다 더 오래 살아남아서 의도치않은 작업을 하기도 하였음. 단순히 코드의 일부를 외부에서 받고자 클로저를 사용하는 경우에는 이런 부작용을 사전에 차단하기위한 장치가 필요함.~~ 
+~~noescape클로져는 async디스패치로 전달이 불가하며 변수로 저장도 불가함. 내부에 self키워드를 쓸필요가 없어짐.~~
 
-http://stackoverflow.com/a/28428521/2047287
+~~http://stackoverflow.com/a/28428521/2047287~~
+
+#### @escaping
+해당 함수의 Lifetime보다 더 오래 살 수 있는 클로져블록. 
+
+
 
 #### Selector
 
-Swift에서 셀렉터는 Selector라는 타입을 가진 구조체이지만 StringLiteralConvertible 프로토콜을 구현하고 있기때문에 문자열과 호환이 된다. 다시말하면 Selector(“test:”) 할 필요 없이 그냥 “test:”해도 셀렉터로 형변환되어 인식한다는 의미다.
-```swift
-	let mySelector: Selector = "methodName:withParameter:"
-```
- `func test(a:String,s b:String) { }` 이러한 함수의 셀렉터는 `"test:s:"`이다. 단, 이때는 반드시 매개변수 2개를 함께 전달해야만 인식한다.
+`#selector(FetchTasklistsOP.didFinishWithTicket(_:receivedData:error:))`
 
 #### Lazy Loading
 계산 시간이 오래 걸리는 경우 사용하거나, 인스턴스 생성 시점에는 계산에 필요한 정보를 아직 다 얻을 수 없는 경우 사용한다.
@@ -215,25 +222,54 @@ Swift에서 셀렉터는 Selector라는 타입을 가진 구조체이지만 Stri
 
 https://developer.apple.com/swift/blog/?id=7
  >어떤 구조(function, class등)에도 속하지 않은 코드를 top-level code라고 한다.
- >playground에서는 어떻게 이런 코드가 실행될까? 기본적으로 swift는 order-independent하다. 즉, import문이 파일 끝부분에 있어도 해당 코드를 실행하는데 아무 문제가 없다. 반면에 Playground는 order-dependent하다. 
-
->swift가 order-independent하다면  프로그램의 진입점은 어디가 되어야 할지가 문제가된다.
-> OSX프로그래밍에서 main.swift 파일은 플레이그라운드와 같이 order-dependent하다.  이곳에 탑레벨코드가 존재하고 여기가 프로그램의 진입점이 된다.
->그러나 iOS프로젝트에서는 이 파일을 볼수가 없는데 대신 @UIApplicationMain 지시자가 존재하는 임의의 swift파일이 진입점이 되도록 자동으로 main.swift파일을 구생성 및 구성해준다.
-
->var someGlobal = foo()
-
->그렇다면 위같은 글로벌 변수는 언제 초기화가 될까?  
-
->단일파일로된 프로그램이라면 대답은 간단하다. 탑다운으로 실행시키면 되므로. 하지만 파일이 많다면?
-
->언어에 따라 세 가지 방식의 초기화 방식이 있다.
+ >playground에서는 어떻게 이런 코드가 실행될까? 기본적으로 swift는 order-independent하다. 즉, import문이 파일 끝부분에 있어도 해당 코드를 실행하는데 아무 문제가 없다. 반면에 Playground는 order-dependent하다. swift가 order-independent하다면  프로그램의 진입점은 어디가 되어야 할지가 문제가된다. OSX프로그래밍에서 main.swift 파일은 플레이그라운드와 같이 order-dependent하다.  이곳에 탑레벨코드가 존재하고 여기가 프로그램의 진입점이 된다.그러나 iOS프로젝트에서는 이 파일을 볼수가 없는데 대신 @UIApplicationMain 지시자가 존재하는 임의의 swift파일이 진입점이 되도록 자동으로 main.swift파일을 구생성 및 구성해준다.
+ >
+ >var someGlobal = foo()
+ >
+ >그렇다면 위같은 글로벌 변수는 언제 초기화가 될까?  
+ >단일파일로된 프로그램이라면 대답은 간단하다. 탑다운으로 실행시키면 되므로. 하지만 파일이 많다면?
+ >언어에 따라 세 가지 방식의 초기화 방식이 있다.
 
 >1. C언어: 단순한 상수형 초기화만 용납함. 싱글톤이나 딕셔너리 같은 복잡한 구조는 초기화가 안되니 너무 제한적이라 별로.
 >2. C++ : static constructor 라는 것을 도입. 좀 복잡한 초기화도 가능해짐. 앱이 로드할때 각 파일들에 존재하는 글로벌 변수들이 먼저 초기화됨. 하지만 이 방식은 대형 앱일수록 로딩시간이 길어짐. 파일이 많아질수록 각 파일에 존재하는 글로벌 변수가 초기화되는 순서가 달라지는 경우의 수가 많아져서 예측이 힘듬.
 >3. 자바: lazy initializer. 최초로 사용할때 비로소 초기화됨. 
 
 >swift는 3번 방식을 채택하였다. 늦은 초기화.
+
+
+
+#### Lazy Caching
+http://stackoverflow.com/a/40847994/2047287
+```swift
+lazy var someVar : Int! = {  }()
+```
+위처럼 타입 뒤에 `!`마크를 붙이고 nil을 대입한 후 재사용할때 재초기화가 이뤄진다.
+마치 ObjC의 늦은초기화 프로퍼티처럼 쓸수있는것이다.
+만약 재초기화를 원하지 않고 nil을 넣을수 있게 하고자 한다면 `?`를 사용하면 된다.
+
+#### Lazy Sequence
+
+배열은 함수와 매핑해서 사용하면 각 멤버들에게 함수를 적용시킬수 있다. 근데 모든 멤버에 즉각 함수를 적용시키는것은 불필요한 계산을 야기할수 있다. 현재 접근하고자 하는 멤버들에게만 계산하는것이 좋을것이다. 그래서 lazy 함수를 사용한다.
+
+```swift
+func increment(x: Int) -> Int {
+  print("Computing next value of " + \(x))
+  return x+1
+}
+
+let array = Array(0..<1000)
+let incArray = array.lazy.map(increment)  // lazy를 없애고 실행하여 비교해보자. 
+print("Result:")
+print(incArray[0], incArray[4])
+
+```
+
+아래처럼 연속으로 사용해도 lazy의 효과는 유지된다.
+
+```swift
+let doubleArray = array.lazy.map(increment).map(double)
+```
+
 
 
 #### static methods / static properties
@@ -245,23 +281,25 @@ Objective-C에서 썼던 static method variable은 Swift에서는 존재하지 �
 ### Singleton
 In Swift, you can simply use a static type property, which is guaranteed to be lazily initialized only once, even when accessed across multiple threads simultaneously:
 ```swift
-class Singleton {
-	static let sharedInstance = Singleton()
+final class Singleton {
+	static let shared = Singleton()
+	private init() {} //This prevents others from using the default '()' initializer for this class.
 }
 ```
 If you need to perform additional setup beyond initialization, you can assign the result of the invocation of a closure to the global constant:
 ```swift
-	class Singleton {
-	    static let sharedInstance:  a href="" Singleton /a  = {
-	        let instance = Singleton()
-	        // setup code
-	        return instance
-	    }()
-	}
+final class Singleton {
+    static let shared:Singleton  = {
+        let instance = Singleton()
+        // setup code
+        return instance
+    }()
+    private init() {} //This prevents others from using the default '()' initializer for this class.
+}
 ```
 https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/AdoptingCocoaDesignPatterns.html
 
-
+> [구조체를 쓰지 않는 이유: 클래스 대신 구조체를 이용하여 싱글톤을 구현하면 값을 바꿀수 없게 된다.](http://stackoverflow.com/a/36788519/2047287) 
 
 
 
@@ -412,6 +450,8 @@ Because declarations marked with the dynamic modifier are dispatched using the O
 
 #### Property Observers
 
+참고 : <a href="./Observer Patterns.md">Observer Patterns</a>
+
 - lazy 가 아닌 어떤 stored property에라도 옵저버를 달아놓을수 있다.
 - 상속받은 프로퍼티에도 오버라이딩을 통해 옵저버를 달 수 있다.
 - computed property에는 옵저버를 달 필요가 없다. 왜냐하면 그냥 세터 내부에서 처리하면 되므로.
@@ -420,6 +460,10 @@ Because declarations marked with the dynamic modifier are dispatched using the O
 - 기존의값과 새값이 똑같다 하더라도 willSet, didSet이 호출된다.
 - 전역변수와 지역변수에도 옵저버 적용 가능하다.
 - 서브클래스에서 세터와 옵저버를 동시에 오버라이드 할 수 없다.
+
+
+
+
 
 
 
@@ -457,9 +501,33 @@ var someProperty3 = { return 2 }	// 클로져 자체를 저장하는 프로퍼�
 
 ###Access level
 
-- public : 외부 모듈에서도 접근가능. 프레임워크를 만들고자 한다면 이를 사용. 
-- internal : 모듈 내에서만 접근가능. 이것이 디폴트 상태이므로 생략가능하다.
-- private : 파일 내에서만 접근가능. 모듈 내의 다른 파일의 코드로부터 격리시켜야 할 코드가 있다면 이걸로 지정.
+각각의 접근 한정자에 대해 간략히 알아보자(가장 개방된 것부터 가장 제한적인 순서로).
+
+**open**
+
+가장 개방된 접근 한정자로써 소속 모듈 또는 소속 모듈을 import하는 모든 모듈에서 class와 class 멤버에 접근할 수 있으며 open class를 상속 받아 sub class를 생성하거나 메서드를 override 할 수 있다. 간단히 이야기 하자면 다른 언어에서의 public과 유사하다.
+
+**public**
+
+open 과 동일한 접근을 허용하지만 sub class 생성과 override에 제한이 있다. 소속 모듈 내에서는 sub class 생성과 sub class 내에서의 override가 허용된다. 이 제한은 프레임워크(모듈)을 제작하는 경우 유용하다. 프레임워크 내에서는 자유롭게 상속 받지만 외부에서는 상속을 받을 수 없기 때문에 확장을 제한할 수 있다.
+
+**internal**
+
+접근 한정자가 지정되지 않은 경우 기본적으로 사용되는 접근 수준이다. 소속 모듈의 모든 소스 파일에서 사용할 수 있지만 모듈 외부에서는 접근 할 수 없다.
+
+**fileprivate**
+
+소속 소스 파일 내에서만 접근이 가능하다.
+
+**private**
+
+현재 소스를 둘러싸는 선언으로 내에서만 접근 가능하다.
+
+Swift 3에서는 위에서 열거한 5가지 레벨로 접근을 제한하도록 되어 있다. 단, Objective-C 클래스와 메소드는 이제 **open** 상태로 가져온다.
+
+------
+
+여기까지만 보면 다른 언어들에 비해 너무 복잡하다는 생각이 들 수 있다. 하지만 어플리케이션은 하나의 모듈과 동일하게 생각하면 되므로 어플리케이션 내에서 작성된 코드는 기본적으로 모든 어플리케이션 소스 내에서 접근 가능하다. 따라서 프레임워크(모듈)를 제작하는 것이 아니라면 **fileprivate** 과 **private** 를 이용해서 접근을 제한하는 경우만 고려하면 된다.
 
 [objective-c에 존재하던 protected는 사라졌다.](https://developer.apple.com/swift/blog/?id=11)
 
@@ -467,500 +535,29 @@ var someProperty3 = { return 2 }	// 클로져 자체를 저장하는 프로퍼�
 
 결론: 일반적인 개발에서는 **private**만 제대로 사용하면된다.
 
-### Tuple
 
-**타입으로써의 튜플 **
 
-Tuple을 이용하면 복수의 리턴값을 가질수 있다
+**Setter에게 Getter 보다 낮은 접근 제한자를 지정하여 쓰기 접근을 제한 할 수 있다.**
 
 ```swift
-func getGasPrices() -> (Double, Double) { return (2.3, 4.2) }
-```
-
-외부 파라미터를 이용하면 튜플에 min, max라는 멤버명을 할당할수 있고 닷연산자를 이용하여 접근이 가능하다.
-
-```swift
-func minMax(array: [Int]) -> (min: Int, max: Int) {
-     var currentMin = array[0]
-     var currentMax = array[0]
-     for value in array[1..<array.count] {
-          if value < currentMin {
-               currentMin = value
-          } else if value > currentMax {
-               currentMax = value
-          }
-     }
-     return (currentMin, currentMax)
-}
-
-let bounds = minMax([8, -6, 2, 109, 3, 71])
-
-print("min is \(bounds.min) and max is \(bounds.max)") // min, max값은 bounds.0 과 bounds.1 로도 접근 가능하다.
-```
-
-
-튜플도 (Int, Int)? 와 같은 표기법을 통해 optional로 만들수 있다. 또한 이는 (Int?, Int?)와는 다르다는 것을 유의하자. 후자의 경우 각 멤버가 nil이 될수 있는것이고 전자는 튜플 자체가 nil이 될수 있는것이다.
-
-
-
-**익명 구조체로써의 튜플 **
-
-```swift
-struct User {
-  let name: String
-  let age: Int
-}
-
-// vs.
-let user = (name: "Carl", age: 40)
+private(set) var someFlag = false
+fileprivate(set) var someFlag = false
 ```
 
 
 
-튜플은 익명의 구조체 역할을 한다. 
-코딩을 하다보면 서로 연관이 있는 변수들을 여러개 선언하게 되는데 이들을 임시로 묶어서 다루면 가독성이 좋아진다. 
+**@testable**
 
-다차원 배열 대신 튜플을 사용할수도 있으며, 옵저버 패턴에서 Listener를 구조체 대신 튜플의 형태로 저장할수도 있다.
-
-만약 scope 범위를 넘어 사용된다면 튜플보다는 구조체 (또는 클래스)가 낫다.
-
-튜플은 타입으로만 사용할수 있는게 아니다. 아래 몇가지 사례를 살펴보자.
-
-**패턴 매칭 도구로써의 튜플**
+단위 테스트 대상은 자체 모듈이므로 기본적으로 **internal** 인 Application 모듈의 모든 메서드 또는 변수에 접근할 수 없다. 이런 경우는 `@testable` 속성을 사용해서 import 한다.
 
 ```swift
-let age = 23
-let job: String? = "Operator"
-let payload: AnyObject = NSDictionary()
+import XCTest
+@testable import MyDataSource
 
-// 23살이며 직업이 있고 payload가 NSDictionary타입으로 되어있는 케이스인지 식별하는 코드
-switch (age, job, payload) {
-  case (let age, _?, _ as NSDictionary) where age < 30:
-  print(age)
-  default: ()
+class MyDataSourceTests: XCTestCase {
+  // func testSomething() {...}
 }
 ```
-
-
-
-switch - case 문을 튜플과 조합해서 사용하면 if - else 구문보다 가독성이 좋다. 자주 사용하자.
-
-**다수의 변수값 대입 도구로써의 튜플**
-
-```swift
-// a is "test", b is 12, c is 3, and 9.45 is ignored
-var (a, _, (b, c)) = ("test", 9.45, (12, 3))
-
-// 여러개의 함수를 한줄에 호출하여 결과값 얻기
-let (a, b, c) = (a(), b(), c())
-
-// Swap 함수 없이 변수값 스왑하기
-var a = 5
-var b = 4
-(b, a) = (a, b)
-```
-
-
-
-배열을 대신해 튜플을 사용하는것도 가능하다.
-
-```swift
-// 짧은 배열 대신 사용하기. 
-var monthValues: [Int]
-var monthValues: (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)
-
-// 짧은 다차원 배열 대신 사용하기
-var matrix = ((1, 0, 0), (0, 1, 0), (0, 0, 1))
-```
-
-배열은 길이에 제한을 줄수 없지만 튜플은 가능하다. 배열을 쓰는경우 런타임에 guard구문을 통해 배열의 크기가 12개를 넘겼는지 여부를 체크해야 한다.  반면, 튜플을 쓰면 컴파일타임에 이 제한규정을 지켰는지 체크가 되므로 디버깅이 쉬워진다.  하지만 루프를 돌리거나 매핑을 할수 없는 등의 단점도 있다.
-
-튜플은 컬렉션이 아니다. 따라서 Type-safe하게 멤버를 Looping하거나 Mapping할 수가 없다. 하지만 우회방법으로 Mirror를 통해 reflection하는 방법이 존재한다. [링크](appventure.me/2015/07/19/tuples-swift-advanced-usage-best-practices/) 참조.
-
-
-
-하나의 함수에 1개 밖에 쓸수없는 가변인자의 한계를 튜플로 극복하자.
-
-```swift
-func batchUpdate(updates: (String, Int)...) -> Bool {
-    self.db.begin()
-    for (key, value) in updates {
-    self.db.set(key, value)
-    }
-    self.db.end()
-}
-
-// We're imagining a weird database
-batchUpdate(("tk1", 5), ("tk7", 9), ("tk21", 44), ("tk88", 12))
-```
-typealias와 사용해보자.
-
-```swift
-typealias Example = (num:Int, age:Int, name:String)
-
-// 이렇게만든 타입을 이용하여 캐스팅하면 순서가 뒤바뀐 튜플도 올바른순서로 reordering이 가능하다.
-let e = (name:"choi", age:19, num:89) as Example
-
-// 배열도 마찬가지로 자동 캐스팅된다.
-let array:[Example] = [(name:”choi”, age:19, num:89)] 
-
-// Function Header는 튜플과 호환된다.
-func foo(a: Int, _ b: Int, _ name: String) -> Int {
-    return a
-}
-
-let arguments = (4, 3, "hello")
-foo(arguments) // returns 4
-
-// 단, 레이블을 일치시켜야 한다.
-func foo2(a a: Int, b: Int, name: String) -> Int {
-    return a
-}
-
-let arguments = (4, 3, "hello")
-foo2(arguments) // fails to work
-let arguments2 = (a: 4, b: 3, name: "hello")
-foo2(arguments2) // works! (4)
-```
-
-
-
-### [Pattern Matching](https://gist.github.com/monadis/e6c7e660b786283e8534de28d5a38343)
-
-### [Type Matching](pastebin.com/MBX1YxZA)
-
-### [Nested Function](https://gist.github.com/monadis/d098d918bddae5abef405cce5a6bc570)
-
-
-
-
-
-### Description
-
-description 프로퍼티는 해당 객체를 설명하는 역할을 한다. 주로 해당클래스의 작성자가 설명코드를 넣는다. debugDescription프로퍼티는 사용자측에서 디버깅의 편의용도로 오버라이드 할수있도록 마련한 프로퍼티다. 
-
-객체를 문자로 출력할수 있는 방법은 print()와 dump()가 있다.
-
-아래와 같이 String만으로 이뤄진 다차원배열은 가로로 출력하고 싶으면 print로, 세로로 출력하고 싶으면 dump를 쓰면 된다.
-
-```swift
-let a = [["가", "다"], ["마", "사"]]
-print(a)  // print(a.description) 과 동일
-dump(a)
-
-// 결과
-[["가", "다"], ["마", "사"]]
-▿ 2 elements
-  ▿ [0]: 2 elements
-    - [0]: 가
-    - [1]: 다
-  ▿ [1]: 2 elements
-    - [0]: 마
-    - [1]: 사
-
-```
-
-
-
-```swift
-let a = [["가", "다"], ["마", "사"], Task()]
-```
-
-위처럼 문자로만 이뤄진 배열이 아닌 객체가 들어가면 Array가 아닌 NSArray로 타입유추가 되어 실행되므로 한글이 제대로 출력되지 않는다. NSArray의 description메소드는 한글 대신 유니코드로 출력되기 때문이다.
-
-print(a)  가 print(a.description) 과 동일하게 작동하는 것은 해당 클래스가 CustomStringConvertible 프로토콜을 구현하고 있을때이다. (그렇지않으면 그냥 클래스명만 출력된다.) 
-
-CustomDebugStringConvertible 를 구현하도록 한다면 print(a) 는 print(a.debugDescription) 과 동일하게 작동한다.
-
-만약 두 프로토콜 모두 구현하고있다면? 
-
-print(a)는 print(a.description) 를 출력한다.
-
-대신 디버그창에서 
-
-```lldb) po a``` 
-
-를 하면 a.debugDescription이 출력된다.
-
-
-
-### attributes
-
-**@availability(arg1, arg2, arg3)**
-
-arg1 : 현재 사용가능한 플랫폼
-
-​	iOS, iOSApplicationExtension, OSX, or OSXApplicationExtension
-
-​	* 를 쓰면 any의 의미를 가짐
-
-arg2, arg3 
-
-(순서는 상관없음)
-
-introduced=플랫폼 버전 넘버
-
-​	해당 버전이후부터 사용가능함을 의미
-
-deprecated=플랫폼 버전 넘버
-
-​	개선된 버전이 나왔거나 나올 예정이니 더이상 해당 코드 사용한 개발을 자제할것. 
-
- obsoleted=플랫폼 버전 넘버
-
-​	이버전 이후로 구식이 되어버림. 사용불가.
-
-message=메시지
-
-​	deprecated 또는 obsoleted의 조건을 어겼을때 나오는 경고구문
-
-unavailable
-
-​	arg1에서 언급한 플랫폼에서 사용불가함을 의미함
-
-renamed
-
-​	unavailable과 함께 사용될 경우 해당 이름이 교체되었으므로 새이름을 사용할것을 나타냄.
-
-​	@availability(*, unavailable, renamed="MyRenamedProtocol”) ; typealias MyProtocol = 	MyRenamedProtocol
-
-**@noreturn**
-
-무한루프함수 또는 프로그램 종료 메소드 처럼 리턴이 없는 메소드나 함수에 쓰임. (리턴값이 nil이라는 뜻이 아님)
-
-노리턴 함수라는것을 컴파일러에게 알려줘야 그에 맞는 처리를 해줌
-
-**@NSCopying**
-
-var 프로퍼티에 사용.(computed property는 안됨) 
-
-해당 프로퍼티의 setter를 synthesize할때, 복사방식으로 구현할것을 지시함. 즉, 외부에서 프로퍼티에 값을 넘겨주면 이것이 참조를 넘겨주는게 아니라 값복사로 넘겨주게됨. 
-
-obj-c의 copy프로퍼티랑 같은역할.
-
- 해당 프로퍼티는 NSCopying프로토콜을 구현하고 있어야 함.
-
-**@NSManaged**
-
-NSManagedObject의 서브객체들을 의미. dynamic하게 생성된 접근자를 통해 코어데이터의 엔티티들과 매핑되도록 구현됨.
-
-**@UIApplicationMain**
-
-해당클래스가 App Delegate 클래스임을 나타내는 어트리뷰트
-
-**@objc**
-
-해당코드를 obj-c 코드에서도 사용가능하게 만들것을 컴파일러에게 지시함.
-
-@objc가 붙은 클래스를 상속한 클래스에는 자동으로 @objc가 붙은걸로 간주됨.
-
-@objc가 안붙은 프로토콜을 상속한 프로토콜은 @objc로 만들수 없다.
-
-**인터페이스 빌더용**
-
-@IBOutlet
-
-@IBAction
-
-@IBInspectable :  IB에서 선택시 해당항목을 inspector창에서 설정가능
-
-@IBDesignable  : 해당 커스텀 뷰가 IB에서 보여짐.
-
-```swift
-@objc
-class ExampleClass {
-     var enabled: Bool {
-          @objc(isEnabled) get {      // enabled라는 변수가 obj-c에서는 isEnabled라는 이름으로 인식된다.
-               // Return the appropriate value
-           }
-     }
-}
-```
-
-
-
-### Enum
-
-다른 언어에서와의 enum과는 달리 그 자체로 클래스의 특성을 지님. 현재 값에 대한 부가정보를 제공할수있는 프로퍼티를 소유할수 있으며, 값정보를 표현하는 메소드와 값의 초기화메소드 등을 포함하기도 한다. 기능을 entend할수 있으며 프로토콜을 상속할수도 있다.
-
-특별히 명시하지 않으면 디폴트값이 자동으로 0,1,2… 로 주어지는 다른 언어와는 달리 swift에서는 임의의 값이 주어진다.
-
-enum형으로 만든 타입명은 대문자로 시작해야 하며, 단수형으로 이름짓자.
-
-case를 이용해서 멤버들을 그룹화할수 있다.
-
-````swift
-enum CompassPoint {
-  case North
-  case South
-  case East
-  case West 
-}
-
-var directionToHead = CompassPoint.West
-directionToHead = .East
-
-// 한줄로 표현가능.
-
-enum Planet: Int {
-  case Mercury = 1, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune
-}
-
-let earthsOrder = Planet.Mercury.rawValue
-// earthsOrder is 3
-
-// rawValue를 이용해 enum값을 생성할수 있다.
-let possiblePlanet = Planet(rawValue: 7)
-// print(directionToHead)를 하면 해당 enum의 내용을 출력해볼수 있다.
-````
-
-
-
-3상태 스위치를 만들수 있음.
-
-```swift
-    enum TriStateSwitch {
-        case Off, Low, High
-
-        mutating func next() {
-            switch self {
-            case Off:
-                self = Low
-            case Low:
-                self = High
-            case High:
-                self = Off
-            }
-        }
-    }
-    var ovenLight = TriStateSwitch.Low
-    ovenLight.next() // .High로 변함
-    ovenLight.next() // .Off로 변함
-```
-
-
-
-**Raw Value**
-
-앞에서 Planet은 Int타입이였는데 다음과 같이 문자로도 가능하다.
-
-```swift
-// 열거형 뒤에 :로 타입을 지정하고, 각 case 식별자마다 기본값(raw 값)을 지정 가능. 로우값으로 지정가능한 타입은 문자열, 문자, 정수 또는 부동소수 타입 뿐임. 연관값은 case 식별자마다 다 타입을 다르게 부여할 수 있고, 어떤 타입이건 가능하지만, 로우값은 그렇지 않음에 유의할 것.
-enum ASCIIControlCharacter: Character {
-  case Tab = "\t"
-  case LineFeed = "\n"
-  case CarriageReturn = "\r"
-}
-
-// raw값으로부터 case를 생성하기.
-let ascii = ASCIIControlCharacter(rawValue: "\r") // ASCIIControlCharacter? 타입
-```
-
-
-
-**Associated Value**
-
-enum의 case에 값을 연결할수 있음(연관값, associated value라 부름)
-
-```swift
-enum Barcode {
-  case UPCA(Int, Int, Int)
-  case QRCode(String)
-}
-var productCode = Barcode.UPCA(8, 85909_51226,3)
-
-// switch로 매치시 case 이름을 사용해 각 성분을 분리해 낼 수 있음
-switch productCode {
-  case .UPCA(let numberSystem, let identifier, let check):
-    print("UPC-A with value of (numberSystem), (identifier), (check).")
-  case .QRCode(let productCode):
-    print("QR code with value of (productCode).")
-}
-
-// 연관값의 enum은 튜플의 확장판에 가깝다. 어떤 연관된 데이터들을 묶고 각 데이터들에 이름을 붙이고 패턴을 분류할수 있게 해준다.
-
-// 각 아이템에 라벨을 붙일수도 있다.  
-  case UPCA(a:Int, b:Int, c:Int)
-```
-
-
-
-**enum을 이용한 함수의 조직화**
-
-데이터뿐만 아니라 함수도 enum을 이용하여 그룹화 할수 있다. 아래 계산기의 예를 보자.
-
-```swift
-enum Operator {
-  case ADD((Int,Int)->Int)
-  case SUB((Int,Int)->Int)
-  case MUL((Int,Int)->Int)
-  case DIV((Int,Int)->Int)
-}
-// recursive enum을 구현하려면 indirect를 써줘야 한다.
-enum Expr {
-  indirect case BINOP(Operator, Expr, Expr)
-  case NUMBER(Int)
-}
-let ADDOP = Operator.ADD(+)
-let SUBOP = Operator.SUB(-)
-let MULOP = Operator.MUL(*)
-let DIVOP = Operator.DIV(/)
-func calc(e:Expr) -> Int {
-  switch(e) {
-  case .BINOP(let op, let e1, let e2):
-    switch(op) {
-    case .ADD(let f):
-      return f(calc(e1), calc(e2))
-    case .SUB(let f):
-      return f(calc(e1), calc(e2))
-    case .MUL(let f):
-      return f(calc(e1), calc(e2))
-    case .DIV(let f):
-      return f(calc(e1), calc(e2))
-    }
-  case .NUMBER(let v):
-    return v
-  }
-}
-
-// (1*3) + (6/2)
-let testExp = Expr.BINOP(ADDOP,
-  Expr.BINOP(MULOP,.NUMBER(1),.NUMBER(3)),
-  Expr.BINOP(DIVOP,.NUMBER(6),.NUMBER(2))
-)
-print("(1 * 3) + (6 / 2) = (calc(testExp))")
-```
-
-함수 내부구현중 일부만 다른 함수 여러개가 있는경우는 nested function부분을 참고하자.
-
-**Enum 형을 AnyObject타입으로 넘겨줘야 할때는 rawValue로 넘겨줘야 한다.**
-
-```swift
-let predicate = MPMediaPropertyPredicate(value:MPMediaType.Music.rawValue, forProperty: MPMediaItemPropertyMediaType!, comparisonType:MPMediaPredicateComparison.EqualTo)
-```
-
-
-
-**값 순환**
-
-```swift
-enum TestEnum: String {
-    case Test1, Test2
-    mutating func flip() {
-        switch self {
-            case .Test1:
-                self = .Test2
-            case .Test2:
-                self = .Test1
-        }
-    }
-}
-```
-
-
-
-[**String을 Enum으로 대체하여 Compile-time safety를 얻자.**](https://gist.github.com/monadis/9a5234ed5093be0dc837)
-
 
 
 
@@ -1013,22 +610,6 @@ switch case 문의 흐름제어는 break, continue 외에도 fallthrough라는 �
 fallthrough: case에서 다음 case로 계속 실행을 이어나가고 싶을 때 이를 명시함.
 
 (주의: fallthrough로 제어가 넘어갈때는 다음번 case문을 체크하지 않고 그 안으로 실행이 넘어간다. 즉, C switch/case에서의 동작과 같다)
-
-
-
-### dynamic
-
-[http://outofbedlam.github.io/swift/2016/01/27/Swift-dynamic/](http://outofbedlam.github.io/swift/2016/01/27/Swift-dynamic/)
-
-Objective-C에서는 클래스의 메서드를 호출하거나 프로퍼티를 참조하는 것을 “함수 호출”이라고 하지 않고 “메시지 전송” 혹은 “메시지 디스패치”라고 합니다. 이렇게 부르는 이유는 Objective-C의 런타임의 동적 바인딩 속성과 관련이 있습니다. 전통적인 “메서드 호출”이 Objective-C에서는 해당 객체에 메시지를 전달하는 과정으로 구현되어 있습니다. 호출자가 “메서드 f를 실행”이라는 메시지를 대상 객체에 전송하고 이 메시지를 수신한 객체는 요청받은 메서드의 구현체를 찾아서 실행하게 됩니다. 여기서 메시지를 수신한 후에 구현코드를 찾는다는 점이 중요합니다. 정적 디스패치의 경우에는 컴파일 타임에 이미 어떤 구현코드가 호출 되어야할지 결정되어 있고 따라서 그 상황에 적절한 코드 최적화를 적용할 수 있습니다. 하지만 동적 디스Objective-C에서는 클래스의 메서드를 호출하거나 프로퍼티를 참조하는 것을 “함수 호출”이라고 하지 않고 “메시지 전송” 혹은 “메시지 디스패치”라고 합니다. 이렇게 부르는 이유는 Objective-C의 런타임의 동적 바인딩 속성과 관련이 있습니다. 전통적인 “메서드 호출”이 Objective-C에서는 해당 객체에 메시지를 전달하는 과정으로 구현되어 있습니다. 호출자가 “메서드 f를 실행”이라는 메시지를 대상 객체에 전송하고 이 메시지를 수신한 객체는 요청받은 메서드의 구현체를 찾아서 실행하게 됩니다. 여기서 메시지를 수신한 후에 구현코드를 찾는다는 점이 중요합니다. 정적 디스패치의 경우에는 컴파일 타임에 이미 어떤 구현코드가 호출 되어야할지 결정되어 있고 따라서 그 상황에 적절한 코드 최적화를 적용할 수 있습니다. 하지만 동적 디스패치에서는 이러한 과정이 런타임에 발생하므로 컴파일 타임의 코드 최적화가 적용될 수 없는 반면에 런타임에 함수나 메서드의 구현 코드를 바꿔치기할 수 있습니다. 이런 기법은 메서드 스위즐링(Swizzling)이라고 합니다. Objective-C의 메서드 스위즐링에 대한 자세한 내용은 [여기](http://nshipster.com/method-swizzling/)를 참조하시기 바랍니다.
-
-
-
-
-
-### [Curried Function](https://gist.github.com/monadis/12f50b36fae32a065794)
-
-![curried function](./images/curried function.jpg)
 
 
 
@@ -1169,217 +750,6 @@ superclass의 deinit은 서브클래스의 deinit이 끝나는 시점에 자동�
 
   
 
-### Optional 변수
-
-Objective-C에서의 nil이 NULL을 가리키는 객체참조를 의미하는 반면 **Swift에서의 nil은 sentinel value 즉, 범위를 벗어난 데이터를 의미**한다. Objective-C에서는 sentinel value를 표현할때 중구난방이였다. (-1, 0, NSNotFound, NSMaxInteger 등등) 하지만 swift에서는 nil로 통일된다. 따라서 어떤 변수를 옵셔널로 만드는 경우는 해당 변수가 범위를 벗어날 가능성이 있는 경우다.
-
-[**implicitly unwrapped optionals**](http://www.drewag.me/posts/uses-for-implicitly-unwrapped-optionals-in-swift)
-
-- 늦게 초기화될수 밖에 없는 변수라서 그때까지 nil이 필요한 경우. (예를 들어, 어떤 뷰 위에 놓인 버튼의 사이즈를 알아내어 변수에 저장하고자할 경우 init이 아닌  viewDidLoad에서 초기화할수밖에 없다.)
-- 해당변수를 사용하는 시각에는 nil이 아닐것을 확신할수 있는 경우.
-- NSObject를 상속받아 만든 객체의 생성자들은 IUO 형을 반환한다. 따라서 이를 저장하는 프로퍼티를 만들 경우 역시 Wrapped Optional 혹은 IUO를 사용한다.
-- 늦게 초기화한다는점에서 lazy프로퍼티와 비슷한것도 같지만 lazy는 access시점에 초기화가 되기때문에    그 사이에 값이 변할수있어 예상치 못한 결과를 낳을지도 모른다.
-- IUO는 App Crash의 위험을 항상 안고있으므로 신중히 사용해야 한다. 가능하면 lazy프로퍼티를 사용하자. 
-
-
-
-```swift
-var optionalInteger: Int?
-var optionalInteger: Optional<Int>
-
-var implicitlyUnwrappedString: String!
-var implicitlyUnwrappedString: ImplicitlyUnwrappedOptional<String>
-```
-
- 
-
-**implicitly unwrapped optional**
-
-ImplicitlyUnwrappedOptional 은 Objective-C와의 호환을 위한 개념이다. 이것이 없으면 UIViewController의 subclass를 만들때 외부에서 전달받는 프로퍼티는 무조건 optional로 만들어줘야 해서 코드가 지저분해진다. (수많은 물음표와 느낌표가 쓰이게 된다.)
-
-Objective-C의 변수들은 ImplicitlyUnwrappedOptional 이라고 보면 된다. 하지만 이 변수는 nil이 될 가능성이 존재하며 nil에 대해 어떤 명령을 내리면 프로그램이 종료된다는 단점이 있다. (변수에 명령을 내릴때마다 매번 nil을 체크해줘야 한다. )따라서 objecive-c와의 호환을 목적으로 하는게 아니라면 가능하면 이 방식으로 변수를 선언하지 않는게 좋다.
-
-> 예외적으로 ImplicitlyUnwrappedOptional  이 요긴하게 쓰이는 곳이 하나 있다.  “nonoptional - nonoptional 순환참조관계” 부분을 참고하자.  
-
-optional 타입은 사실 enum타입이다.  Some(T)및 .None를 멤버로 갖고있다.
-
-optional 를 사용하지 않는 다른 언어에서는 메소드 사용시 파라미터로 nil값이 들어가는 경우에대해 매번 고려해야 하며, nil이 들어왔을때의 행위에 대해 일일이 설명해야만 했다. 왜냐하면 모든 변수가 nil값을 허용하고 있기 때문이였다. 이러한 불안요소를 안고 코딩을 해야했다.하지만 swift는 애초에 디폴트로 nil을 막아놓는다. optional 변수일때만 nil이 허용된다. 따라서 메소드 선언부만 보고도 이곳에 nil을 넣으면 되는지 여부를 쉽게 알수있다.
-
-변수는 Non-Optional, Wrapped Optional, Implicitly Unwrapped Optional로 나뉜다.
-
-1. var str: String = “Hello”
-2. var str: String? = “Hello”       
-3. var str: String! = “Hello”
-
-**str?.uppercaseString  **
-
-- optional chaining 참고
-- 항상 wrapped된 값을 반환한다. 따라서 실행결과는 {Some “HELLO”} 
-- str이 nil일 경우 해당줄은 실행이 되지않으며 nil을 반환하게 된다. (그렇다면, 실행하고 난 뒤의 리턴값이 nil인 경우와 혼동이 되지 않을까? 하지만 이런경우엔 { } 와 같은 비어있는 wrapped object를 반환하기에 구분이 가능하다.)
-- str이 wrapped 이건 unwrapped이건 동일한 결과. 
-
-**str!.uppercaseString**
-
-- forced unwrapping
-- str에 값이 존재한다고 간주한다. str이 nil일 경우 런타임 에러난다.
-- unwrapped된 값을 반환한다. 즉, 실행결과는 “HELLO” 
-
-**str.uppercaseString**
-
-- str이 wrapped라면 컴파일타임 에러가 난다.
-- str이 unwrapped라면 str!.uppercaseString와 동일한 결과가 난다.
-
-```swift
-var window: UIWindow?
-var application: UIApplication!
-```
-
-UIWindow?는 wrapped optional입니다. 즉, nil이 될수있는 객체인데, 껍질이 객체를 둘러싸고있다고 보시면 됩니다. 이 껍질때문에 이 객체는 바로 내부에 접근이 안됩니다. 껍질을 깨주는 작업을 해야만 직접적인 접근이 가능합니다. 느낌표!가 껍질깨는 작업을 하라는 신호입니다. 이를 이용해서 껍질을 열게됩니다. 
-
-UIApplication!은 unwrapped optional입니다. wrapped optional에 미리 !를 적용해서 열어둔상태입니다. 따라서 내부로 그냥 접근이 됩니다.
-
- 
-
-껍질이 존재하는 이유는 다이내믹한 처리가 가능해지기 때문입니다.
-
-method call은 객체가 nil이면 에러가 납니다. 하지만 message passing은 에러가 나지않고 nil을 반환합니다.
-
-```swift
-window!.doSomething()     // method call
-window?.doSomething()    // message passing
-application.doSomething()     // method call    (호출시 느낌표 필요없음)
-```
-
-반대로 wrapped optional에게 !를 붙이면 unwrapped되어 method call이 됩니다.
-
-wrapped optional에 ?를 붙여서 메소드를 호출하면 method call이 아니라 message passing이 됩니다. 즉, 객체가 껍질내부에 존재하면 메시지를 받게되고 존재하지않으면 nil을 반환합니다. 즉, 껍질이 이런판단을 하는 if-else문 역할을 합니다. 
-
- 
-
-```swift
-class Person {
-	var age = 0
-	func a() { }
-}
-
-var man:Person? = Person()
-var man2:Person! = Person()
-man.age = 20 // 에러.
-man?.age = 20 // 에러. man?.age 는 {Some 0}를 리턴할수만 있을뿐 값을 대입할수는 없다. 값을 변환하려면 unwrapped상태에서만 가능.
-man!.age = 20 // 처리됨.
-
-man.a() // 에러. 이녀석은 값을 변형시키지도 않는데 왜 에러가 날까요?
-man?.a() // 처리됨. 이를 optional chaining이라 함.
-man!.a() // 처리됨.
-
-man2.age = 20 // 처리됨
-man2?.age = 20 // 에러.
-man2!.age = 20 // 처리됨.
-
-man2.a() // 처리됨
-man2?.a() // 처리됨. 
-man2!.a() // 처리됨.
-```
-
-
-
-**wrappedOptional?.unwrappedOptional?.method() 와 같은 호출은 되지 않는다.**
-
-unwrappedOptional에 ?를 붙이는건 규정에 어긋나기때문이다. 이럴 경우 if let문으로 해결한다.
-
-```swift
-if let obj = wrappedOptional?unwrappedOptional { obj.method() }
-```
-
-
-
-### [순환참조의 해법 : Weak, Unowned](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html)
-
-
-
-단순히 binding을 하는것만으로도 strong reference가 생겨난다. 
-
-```swift
-let parent = myParent
-```
-
-weak reference를 만들려면 앞에 weak을 붙여야 한다. 또한 var 타입이어야 하며 optional이어야 한다. 그래야 릴리즈시 nil로 될수 있기 때문.
-
-```swift
-weak var parent : Person?
-```
-
-weak은 optional변수일 경우 사용한다. non-optional변수일 경우 nil로 만들수 없으므로 weak을 사용할수가 없게되는데 이런 경우에는 unowned를 사용한다. 그 외에는 두 키워드의 기능은 동일하다.
-
-**optional - optional (예 : 사람과 아파트의 관계) **
-
-아파트가 없는 사람이 있을수 있고 주인이 없는 아파트도 있을수 있다. 즉 양쪽 객체들의 lifetime이 독립적인경우 이 관계를 이을때는 weak을 사용. 따라서
-
-```swift
-// 양쪽다 wrapped optional이다. 둘중 하나에 weak을 붙여준다.
-class Person {
-	var apartment: Apartment?
-}
-class Apartment {
-	weak var tenant: Person?
-}
-```
-
-**optional - nonoptional (예 : 고객과 신용카드의 관계) **
-
-신용카드에는 반드시 고객의 정보가 들어있어야 함. 고객은 신용카드가 없을수도 있음.  따라서 신용카드 객체는 고객이라는 프로퍼티를 non-optional로 갖고있어야 함.  고객 객체는 신용카드라는 프로퍼티를 wrapped optional로 갖고있어야 함. 신용카드가 고객을 소유하는 것이 아니므로 신용카드의 고객프로퍼티가 약한 결합이어야 한다. 근데 non-optional이므로 unowned라는 키워드를 붙이면 된다.
-
-```swift
-// 한쪽은 unowned non-optional, 다른한쪽은 wrapped optional이어야 한다.
-class Customer {
-	var card: CreditCard?
-}
-class CreditCard {
-	unowned let customer: Customer
-}
-```
-
-**nonoptional - nonoptional (예: 국가와 수도의 관계) **
-
-국가와 수도는 순환참조 관계다. 이때, 어떤나라든 수도를 갖고있다. 어떤 도시든지 국가에 속한다. 따라서 양 객체의 참조는 둘중 어느 하나도 nil이 될수 없다. 근데 이러한 이유때문에 이 둘을 생성하는데 딜레마에 빠지게 된다. 국가라는 객체를 만들기위해서는 반드시 수도가 있어야 한다. 근데 수도 객체를 만들기위해서도 반드시 국가가 필요하다. 국가의 생성자 내에서 수도의 생성자를 호출하게 되는데 수도의 생성자에게 매개변수로 국가 자신 즉, self객체를 전달해서 생성해야 한다. 그런데 국가 생성자 내부는 아직 객체가 만들어지지 않은 상황이므로 self를 전달할수가 없다. 이런 딜레마를 해결하기 위하여 swift의 생성자는 two phases initialization 방식을 도입하였다. 이방식의 특징은 해당 클래스의 프로퍼티들이 초기화가 모두 완료된 직후(생성자가 아직 리턴이 되지 않은 상황일지라도)부터는 바로 self를 사용할수 있다는데 있다. 국가 객체는 수도 프로퍼티를 갖고있는데 이를 unwrapped-optional변수로 선언한다. 이 변수는 선언 즉시 일단 nil로 초기화가 된다. (하지만 이 변수에 접근하기 전에 nil값을 반드시 유의미한 객체로 채워야먄 런타임 에러가 안나는 특성이 있다. ) 수도 프로퍼티가 nil로 초기화 되었으므로 이제는 self를 사용할수 있다. self를 수도 생성자에 전달하여 수도객체를 생성하면 된다. 생성된 수도객체는 방금까지 nil이었던 수도프로퍼티에 넣으면 된다. 수도객체의 국가프로퍼티는 non-optional이므로 unowned로 놓으면 된다.
-
-```swift
-// 한쪽은 implicitly unwrapped optional이고, 다른한쪽은 unowned non-optional이어야 한다.
-class Country {
-     let name: String
-     var capitalCity: City!       // implicitly unwrapped optional.
-     init(name: String, capitalName: String) {
-          self.name = name
-          self.capitalCity = City(name: capitalName, country: self)
-     }
-}
-
-class City {
-     let name: String
-     unowned let country: Country
-     init(name: String, country: Country) {
-          self.name = name
-          self.country = country
-     }
-}
-```
-
- 
-
-#### 인스턴스와 Closure간의 순환참조
-
-인스턴스가 클로저를 멤버로 retain하며, 클로저 내부에서 해당인스턴스를 self로 접근함으로써 순환참조가 된다. 단순히 메소드 내의 지역변수에 retain된 블록은 그 메소드가 리턴됨과 동시에 메모리해제되므로 순환참조가 발생하지 않는다. 혼동하지말자. 
-
-순환참조를 깨려면 아래처럼 [unowned self]를 넣어주면됨. 순환참조되는 객체가 여러개라면 [unowned self, weak someInstance] 처럼 리스트를 만들어줄수 있음. 이를 capture list라고 함.
-
-***메소드의 로컬변수는 strong으로 참조해도 괜찮다.***
-
-블록내에서 프로퍼티를 참조할경우 self.를 앞에 붙이는것이 강제된다. 그 이유는 이것이 self를 강한참조하고있음을 명확히 보여줄수 있기 때문이다. 실수로 순환참조를 만들 가능성을 줄일수 있다.
-
-``` swift
-// Weak capture of "self.parent" as "parent" 
-myFunction { [weak parent = self.parent] in print(parent!.title) }
-```
 
 
 
@@ -1425,4 +795,10 @@ enumerable.enumerateObjectsUsingBlock { (obj, idx, stop) -> Void in
 
 
 ###[Operator 및 연산자 오버로딩](https://gist.github.com/monadis/58161905dc3bd644512d593dbe456c0e)
+
+
+
+## ⚠️유의사항
+
+- 타입명이 맘에 안들면 typealias를 사용하자. 타입명이 직관적이지 않거나 쓸데없이 길거나 혼동이 오는 경우는 매우 많기 때문이다. 
 

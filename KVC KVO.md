@@ -14,6 +14,10 @@ willChangeValueForKey() , didChangeValueForKey() , willChange(_:valuesAtIndexes:
 
 하지만 오버라이드 하지말도록 규정되어있다.  willSet, didSet 내에 코딩하면 동일한 효과를 볼수 있기때문에 굳이 필요없다. 이를 사용하기 힘든 경우라면 observeValueForKeyPath() 메소드를 사용하자.
 
+#### 알아두기
+- 특정 프로퍼티의 변화를 감지한다는 것은 그 프로퍼티 자체가 변하는것을 감지하는 것이다. 따라서 그 프로퍼티 내부의 하부 프로퍼티가 변한다고 해도 옵저버는 감지하지 않는다.
+- KVO를 쓰려면 Objective-C 클래스의 서브클래스 이거나 `dynamic` 키워드 사용한 Swift클래스 여야 한다.
+- willSet, didSet도 비슷한 기능을 하긴 하지만 자신의 프로퍼티만 관찰할수 있는 한계가 있다.
 
 
 #### 옵저버의 등록
@@ -188,4 +192,7 @@ fullname에 대해 addObserver를 해놓은 뒤, firstname 혹은 lastname을 �
 #### to Many 릴레이션십에서의 의존성 맺기는 다음을 참고하자.
 
 https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVODependentKeys.html#//apple_ref/doc/uid/20002179-BAJEAIEE
+
+
+
 

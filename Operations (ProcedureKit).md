@@ -230,9 +230,26 @@ LogManager.enabled = false
 https://operations.readme.io/docs/logging
 
 
-## Operation의 종류
+## Procedure의 종류
+
+#### Network Procedure
+
+```swift
+func testNetworkProcedure() {
+	let url : URL! = "http://www.dragonballgt.com/images/content-keyart-home.jpg"
+	let request : URLRequest! = URLRequest(url: url)
+	let session = URLSession(configuration: .default)
+	let download = NetworkDataProcedure(session: session, request: request) { result in
+		let data : Data = result.value!.payload!
+		let image = UIImage(data: data)
+		ULog(image: image)
+	}
+	operationQueue.add(operation: download)
+}
+```
 
 #### ComposedOperation
+
 NSOperation의 서브클래스를 Operation으로 바꿔주는 wrapper
 
 #### GatedOperation
@@ -414,3 +431,6 @@ processing.injectResultFromDependency(retrieval) { op, dep, errors in
 
 
 
+## ⚠️ 주의 사항
+
+- OperationQueue에 addOperation(...) 이라는 메소드가 있는데 이를 사용하면 안되고 ProcedureKit의 add(operations:)메소드를 사용해야 한다.

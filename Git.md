@@ -219,7 +219,7 @@ Git에서는pull이라 하고, Subversion에서는 update라 한다.
   
 
 #### [특정파일의 변경 히스토리를 보는 법](http://www.shellhacks.com/en/Git-The-Change-History-of-a-Specific-File) 
-소스트리에서 해당 파일을 클릭후 Log Selected를 선택해도 된다.
+- 소스트리에서 해당 파일을 우클릭후 `Log Selected..`를 선택하면 해당 파일의 history가 나온다.
 
 
 
@@ -354,239 +354,6 @@ master branch가 있는데 왜 릴리즈 브랜치가 따로 필요한 걸까? �
 
 
 
-
-
-
-
-
-
-## ⚠️필독 사항
-
-- master branch에서 작업하지 말자. 개발코드의 주된 줄기를 저장하는 곳을 trunk(혹은 master branch)라 하고, 주변기능을 개발하는 동안 줄기 코드의 변형을 피하기 위해 복사본을 저장하는 곳을 branch라고 한다.  master branch는 가장 안정버전의 branch를 merge하는 용도로 써라.
-- 불확실한 작업을 하려한다면 해당 위치에서 브랜치를 만들어 놓자. 그러면 언제든 해당 브랜치로 돌아올수 있기 때문이다.
-- 커밋을 할때는 현재까지의 변경사항을 전부 커밋할게 아니라 기능적 변화 단위로 묶어서 커밋하자. 기능적으로 관련있는 변화들을 묶어서 커밋을 하면 차후 수정을 할때도 편하다. staging영역은 그러한 작업을 위해 존재한다. staging영역에 넣고 빼는것을 통해 무엇을 커밋하고 무엇을 안할지 결정할수 있다.
-
-
-- storyboard나 xib파일과 같은 복잡한 파일은 과거의 상태로 revert를 하면 버그가 발생할 수 있다. 이 때는 차라리 그 파일을 지워버리고 그 파일만 체크아웃을 하여 재생성하자.
-  - rm something.xib
-  - git checkout something.xib
-
-
-- xcode상에서 파일명을 변경하지 말자.
-
-```shell
-> git mv 원본파일명 새파일명
-```
-
-의 명령으로 파일명을 바꾸자. 그래야 git상에서 파일의 동일성이 유지됨. 
-
-
-
-
-
-## FAQ
-
-
-- 빈 저장소를 생성하고 싶은 경우
-
-  git init - - bare
-
-- 현재까지 수정한 내용들(commit은 안된)을 전부 discard하고 싶을 경우. 
-
-  상단 메뉴의 reset버튼을 누르자.
-
-- 커밋 메시지만 수정하고 싶은 경우
-
-  SourceTree: 수정을 원하는 커밋 위치에서 commit 버튼을 누름 맨 하단의 amend latest commit 체크
-
-- 지난커밋에 깜빡잊고 넣지 않은 수정사항이 있을경우. 새로 수정한 내용이 생기긴 했는데 새로 커밋을 만들기보다는 지난 커밋에 합치고 싶을경우.
-
-  SourceTree: 수정을 원하는 커밋 위치에서 commit 버튼을 누름 맨 하단의 amend latest commit 체크
-
-- 과거의 커밋상태로 돌아가고 싶은경우가 있다. 의미없이 작은 단위의 커밋을 너무 많이 해서 하나의 커밋으로 합치고 싶은 경우가 있다. (단, 아직 push가 되지 않았을때 사용)
-
-  - SourceTree: 돌아가고 싶은 커밋에 마우스 우클릭. Reset <Branch name> to this commit 메뉴를 선택.
-    - Soft를 선택하면 과거커밋 특정지점으로 돌아가며 그 이후의 변경사항은 uncommited changes상태로 남아있게됨.
-    - Hard를 선택하면 선택한 커밋 이후의 변경사항은 다 지워짐. 
-  - 이미 push가 된 상황이라면 reset대신 revert를 써야 한다. 커밋을 선택하여 우클릭 후 reverse commit을 누르자.
-
-- 커밋을 하다보면 실험용 브랜치를 만드는 경우가 있다. 사실 이런경우는 분기라고 하기 어렵다. 왜냐하면 코딩이 작성되는 줄기는 여전히 하나이기 때문이다. 실험이 실패했을경우 브랜치를 지워버리고 성공했을경우 이 브랜치를 master의 연장선으로 바꿔주고 싶을것이다. 이럴 때 rebase가 편리하다.
-
-- 각 커밋에 버전을 적고 싶다면?
-
-  Tag를 사용하자.
-
-- 지난 커밋을 취소하고 싶긴 한데, 그 이후에 작성한 내용은 보존하고 싶을 때.
-
-  - git revert HEAD^ 
-  - 잘못된 커밋 위에 작성한 새로운 내용이 있을 경우, 잘못된 커밋은 undo하고 새로운 작성내용은 대체된 커밋에 merge 시킴.
-
-- 작성중인 코드 변경사항을 현재 브랜치가 아닌 다른 브랜치로 커밋하고 싶을 경우
-
-  - 현재 변경사항을 아직 커밋하지 않았다면 그냥 현재 위치에서 새브랜치를 만들고 거기에 커밋하면 된다.
-  - 현재 변경사항을 커밋했다면 바로 전 커밋으로 soft reset한 후, 그 위치에서 새브랜치를 만들고 커밋하면 된다.
-
-- 새로 브랜치를 만들어 커밋했어야 하는데 그냥 master에 커밋한 경우 이를 쉽게되돌리는 방법
-
-  - [http://learn.github.com/p/undoing.html](http://learn.github.com/p/undoing.html)  <breaking work into a topic branch 부분 참고> 
-
-- 현재 브랜치에서 작업도중 다른 브랜치에서 해야 할 작업이 생겼을경우가 있다. 이대로 커밋을 하자니 껄끄럽다면? 
-
-  stash기능을 사용하자.
-
-
-#### 기존의 XCode 프로젝트에 Git 수동 설치
-
-```shell
-git init
-git add . 
-git commit -m "Initial commit"
-```
-
-위를 실행 후 다음과 같이 xcode 세팅
-
-![md image](./images/xcode git enable.jpg)
-
-
-
-#### Git 삭제
-
-xcodeproj파일이 있는 폴더로 가서 .git 디렉토리를 폴더째로 삭제하면 됨. 
-그리고 위 그림의 Enable Source Control을 체크해제 하면됨.
-
-#### 개별파일 원복
-
-```shell
-git checkout  -- <파일> #워킹트리의 수정된 파일을 index에 있는 것으로 원복
-git checkout HEAD -- <파일명> #워킹트리의 수정된 파일을 HEAD에 있는 것으로 원복(이 경우 --는 생략가능)
-git checkout FETCH_HEAD -- <파일명> #워킹트리의 수정된 파일의 내용을 FETCH_HEAD에 있는 것으로 원복? merge?(이 경우 --는 생략가능)
-```
-
-#### index 추가 취소
-
-```shell
-git reset -- <파일명> # 해당 파일을 index에 추가한 것을 취소(unstage). 워킹트리의 변경내용은보존됨. (--mixed 가 default)
-git reset HEAD <파일명> # 위와 동일
-```
-
-#### commit 취소
-
-```shell
-git reset HEAD^ # 최종 커밋을 취소. 워킹트리는 보존됨. (커밋은 했으나 push하지 않은 경우 유용)
-git reset HEAD~2 # 마지막 2개의 커밋을 취소. 워킹트리는 보존됨.
-git reset --hard HEAD~2 # 마지막 2개의 커밋을 취소. index 및 워킹트리 모두 원복됨.
-git reset --hard ORIG_HEAD # 머지한 것을 이미 커밋했을 때,  그 커밋을 취소. (잘못된 머지를 이미 커밋한 경우 유용)
-git revert HEAD # HEAD에서 변경한 내역을 취소하는 새로운 커밋 발행(undo commit). (커밋을 이미push 해버린 경우 유용)
-```
-
-#### 워킹트리 전체원복
-
-```shell
-git reset --hard HEAD # 워킹트리 전체를 마지막 커밋 상태로 되돌림. 마지막 커밋이후의 워킹트리와 index의 수정사항 모두 사라짐. 
-                                  (변경을커밋하지 않았다면 유용)
-git checkout HEAD . # ??? 워킹트리의 모든 수정된 파일의 내용을 HEAD로 원복.
-git checkout -f # 변경된 파일들을 HEAD로 모두 원복(아직 커밋하지 않은 워킹트리와 index 의 수정사항 모두 사라짐. 신규추가 파일 제외)
-```
-
-#### svn checkout을 통해 웹상의 오픈소스를 받을때
-
-이때 이미 이 소스의 예전버전을 컴퓨터에 다운받은적이 있다면 해당 버전이 너무 낮다고 에러를 표시할때가 있다. 이경우에는 svn upgrade를 해주면 되는데 해당 폴더(.svn이 있는 폴더)내로 이동후 실행해야 한다는 점을 유의하자.
-
-물론 예전버전이 있는 폴더를 아예 삭제하고 다시 받는게 더 좋을수도 있다.
-
-
-
-#### Remote Push 실패시
-
-`error: failed to push some refs to ...` 와 같은  에러가 나는데 이 경우는 리모트의 수정내용이 로컬에 반영이 되지 않았기에 발생하는 에러다.
-먼저 pull을 해서 merge해 줘야 한다. 그다음에 다시 push해주면 에러가 나지 않을 것이다.
-
-#### Detached Head가 발생해버린 경우 대처법
-
-http://sitaramc.github.com/concepts/detached-head.html
-
-브랜치라는 것은 개념적으로 볼때 일련의 연속된 커밋을 의미하지만 사실 우리가 'git branch <브랜치명>'으로생성하는 그 <브랜치명> 자체는 일종의 head다. (git checkout master라고치면 master브랜치의 head로 이동함) 즉, 가장 마지막에 작성된 커밋을 참조하고 있는 포인터에 불과하다. detached head는 이러한포인터를 남겨두지 않고 작성된 브랜치 때문에 발생한다.
-
-Detached Head가 발생하는 경우는 과거의 커밋으로 이동(체크아웃)을 한 상태에서 다시 커밋을 함으로써 익명의 브랜치가 생겨버린 경우에 발생한다. 익명의 브랜치는 SourceTree에서는 HEAD라는 이름의 브랜치가된다. 이 익명의 브랜치 위에서 계속 커밋을 하며 개발을 하다가 다른 브랜치로 이동을 할 경우 익명의 브랜치는 참조가 없기때문에 사라져버린다. 즉, detached head가 생긴셈이다.  
-
-따라서 HEAD라는 브랜치가 생겨버렸다면 즉시 git branch <브랜치명>을 이용하여참조를 생성해주면 된다. 
-
-그런데 미처 참조를 생성하지 못한 채 다른 브랜치로 이동을 해버려서 detached head가 생겼다면 다음과 같이 하자.
-
-- $ git reflog show HEAD@{now} -10 명령을 이용하여 과거의 헤드 히스토리를 모두 알아낸다.
-- 과거의 헤드 중에서 당신이 잃어버린 브랜치 헤드의 SHA값(7fdae94)을 알아냈다고 하면 다음과 같이 명령을 내리자. 
-- $ git branch newBranchName 7fdae94  
-
-#### Commit 이 제대로 안될경우 해결방법
-
-If you'd like to simply commit all changes you made, doing so through the Terminal should fix the problem.
-
-Open the Terminal App and cd into your project directory, once there type in the following command:
-
-git commit -a
-
-Enter your commit message by pressing 'i' and typing it in, then press 'Esc', then ':', and type 'wq'
-
-All done, you're problem should be fixed.
-
-#### 소스 충돌로 잘 안 될 경우
-
-이클립스에서 terminal을 추가하거나 콘솔에서 해당 프로젝트 폴더로 이동한 후에,
-
-git status
-
-명령어로 현재 상태를 확인한다. .
-
-그 후에 문제가 되는 파일을
-
-git checkout - - 문제파일
-
-명령어로 적절하게 해결한다.
-
-그래도 안된다면 다시 돌려도 되는 파일이라는 가정아래 해당 파일을 revert 하는 등의 조치가 필요하다.
-
-#### 이미 리모트로 Push를 한 커밋이 잘못되었다는걸 깨달았을때
-
-revert를 한다.
-
-#### 로컬로 커밋한 내용이 잘못일때
-
-reset을 함. hard, mixed, soft중에 택일
-
-
-
-####파일 또는 폴더 추적 멈추기 (Untrack)
-
-간혹 저장소에 포함하지 말아야할 파일이나 폴더가 생길때가 있다. 만약 .gitignore 파일에 제외 파일/폴더 이름들을 기입하면 git은 기입 시점부터 track을 멈춘다. 이건 파일을 지우지는 않는다. 따라서 최신버전은 그대로 유지된다. Untrack 하려면 다음 명령어를 사용한다.
-
-```shell
-# .metadata 폴더를 untrack 하려는 경우
-git rm -r --cached .metadata
-# test.txt 파일을 untrack 하려는 경우
-git rm --cached test.txt
-```
-
-파일은 지워지지 않는다. 이전 커밋 히스토리 까지는 파일이 여전히 남아있다. 만일 히스토리상에서 사라지길 원한다면 "git filter-branch"를 살펴보길 바란다. 이 명령어는 커밋 히스토리를 수정하기 위해 사용되는 것이다.
-
-
-
-
-
-## 팁
-
-- /usr/bin/git은 xcode가 쓰는 버전의 git이다. 이것은 오래된 버전이다.  /usr/local/git/bin/git  위치에 새버전의 git이 있다.
-- github는 원격저장소로 쓰기엔 소스가 다 공개되어버려서 힘들다. bitbucket에서는 5개까지의 비공개 repository를 허용하므로 이를 사용해도 된다. 단, 개인프로젝트는 드롭박스가 좋다.
-- 다른 버전컨트롤 시스템과는 달리 Git는 커밋한다고 해서 모든 코드를 복사하여 저장소에 넣지 않는다. index를 이용하여 갱신된 부분만을 넣게 된다. 
-- UserInterfaceState.xcuserstate를 ignore 하는 법
-  http://stackoverflow.com/a/24746250
-- ​
-
-
-
-
-
-
-
 ### 드롭박스를 원격저장소로사용하기 
 
  
@@ -620,7 +387,8 @@ Name에Dropbox입력, Path에 [file:///Users/monadis/Dropbox/gitrepo/task.git](u
 
 
 ###Naming 규칙
-####commit message naming
+#### commit message naming
+
 [카테고리] - [간단한 메시지]
 카테고리에는 fix, add, mod, rm 가 있음. 버그수정, 기능추가, 기능변경, 기능제거 등을 의미함.
 
@@ -638,89 +406,51 @@ z는 버그수정
 
 
 
-## Github
 
-- [http://dogfeet.github.io/articles/2012/how-to-github.html](http://dogfeet.github.io/articles/2012/how-to-github.html)    
-- [http://blog.outsider.ne.kr/865](http://blog.outsider.ne.kr/865)    ← 개념이 아주 쉽게 설명됨.
-- github에 기존 프로젝트를 올리려면? 일단 github에서 repository를 생성하자. repo를 생성후 어떤 명령을 입력해야 하는지 설명이 나오므로 읽어보고 따라하자.
-- fork 버튼의 우측의 숫자풍선을 클릭하자. network graph를 잘보고 커밋의 내용을 살펴보면서 나에게 적당한 버전을 찾아야 한다.
-- safari에서는 github의 network graph가 제대로 다 보이지 않음. 크롬을 이용하자.
-- issue
-  - 현재 개발고려중인 이슈를 알수 있다. 
-  - 여기 존재하지 않는 건에 대해 새로운 기여를 하고자한다면 이슈글을 올려보자. 개발자들로부터 조언을 받을수 있고 반복된 시행착오를 안할수있다.
-- fork
-  - fork의 변경사항을 오리지날 저장소에도 적용하고 싶으면 pull request를 해야하고 거절당하지 않아야 한다. 
-  - fork는 복사본이 아니다. 파생본이다. clone은 원본소스에 대해 읽기권한만 주어지는 반면 fork는 쓰기도 가능하다. 이렇게 하는 이유는 함부로 서버상의 소스를 수정할수 없게 하기 위함이다. fork를 안하고 바로 clone을 하면 서버상의 소스에 대해서 read-only가 된다. 로컬에서 변경은 시킬수 있지만 이 변경내용이 리모트의 소스에 적용되지는 않는다는 의미다. 만약 소스를 수정해서 쓰고싶고 또한 수정된 소스를 모두와 공유하고 싶다면 fork를 이용하자.
-- SSH 주소
-  - https가 아닌 [git@github.com](mailto:git@github.com): 으로 시작되는 주소.
-  - SSH 주소를 사용한 것은 git 프로토콜이 HTTPS보다 훨씬 빠르고 Github에 SSH키를 등록해 놓으면 푸시할때 암호를 입력하지 않아도 되기 때문이다.
-- upstream과 downstream의 개념 : [http://stackoverflow.com/a/2749166/2047287](http://stackoverflow.com/a/2749166/2047287)
-  - server와 client개념과 유사하지만 상대적인 면에 초점을 맞춘 개념이다. 상류가 하류에 영향을 미치지만 하류도 때에따라서는 상류가 되어 다른 하류에 영향을 미치게 된다.
-  - upstream과 origin의 차이 : [http://stackoverflow.com/a/9257901/2047287](http://stackoverflow.com/a/9257901/2047287)
+
+## 기타
+
+- /usr/bin/git은 xcode가 쓰는 버전의 git이다. 이것은 오래된 버전이다.  /usr/local/git/bin/git  위치에 새버전의 git이 있다.
+- github는 원격저장소로 쓰기엔 소스가 다 공개되어버려서 힘들다. bitbucket에서는 5개까지의 비공개 repository를 허용하므로 이를 사용해도 된다. 단, 개인프로젝트는 드롭박스가 좋다.
+- 다른 버전컨트롤 시스템과는 달리 Git는 커밋한다고 해서 모든 코드를 복사하여 저장소에 넣지 않는다. index를 이용하여 갱신된 부분만을 넣게 된다. 
+- UserInterfaceState.xcuserstate를 ignore 하는 법
+  http://stackoverflow.com/a/24746250
+- ​
 
 
 
 
 
-#### Github.app
+## ⚠️필독 사항
 
-![md image](./images/1mIwOR7.png)
-
-- 원하는 저장소를 Fork한다.
-
-![md image](./images/rmCrwUx.png)
-
-버튼을누르면 자동으로 Github.app이 론칭되며 원하는 경로를 설정해주면 클로닝된다. 버튼을 눌러도 클로닝이 안된다면 Github앱을 다시 깔거나 업데이트를 해보자.
-
-- Local에서 코딩작업을 하였다면 Commit을 한 후에 좌상단 Sync버튼을 누르면 Remote에도 적용된다.
-
-좌상단 + 버튼을 눌러보자
-
-- add : 이미 로컬에 존재하는 저장소를 github로 올릴때 사용
-- create: 완전히 새로운 빈 저장소를 만듬
-- clone: 리모트에 존재하는 (fork 된) 저장소를 로컬로.. “clone in desktop”버튼과 비슷한 효과
-
-앱에서 저장소를 remove해도 삭제가 되지 않는다. 리모트에서의 삭제는 [github.com](http://github.com)의 해당 프로젝트로 들어가서 우측 메뉴 하단에 Setting에서 할수 있다.
-
-새 브랜치를 만들려면 current branch의 + 버튼을누른다.
-
-![md image](./images/RaGKvZD.png)
-
-다른 브랜치로 이동하려면 해당 브랜치를 더블클릭 한다.
+- master branch에서 작업하지 말자. 개발코드의 주된 줄기를 저장하는 곳을 trunk(혹은 master branch)라 하고, 주변기능을 개발하는 동안 줄기 코드의 변형을 피하기 위해 복사본을 저장하는 곳을 branch라고 한다.  master branch는 가장 안정버전의 branch를 merge하는 용도로 써라.
+- 불확실한 작업을 하려한다면 해당 위치에서 브랜치를 만들어 놓자. 그러면 언제든 해당 브랜치로 돌아올수 있기 때문이다.
+- 커밋을 할때는 현재까지의 변경사항을 전부 커밋할게 아니라 기능적 변화 단위로 묶어서 커밋하자. 기능적으로 관련있는 변화들을 묶어서 커밋을 하면 차후 수정을 할때도 편하다. staging영역은 그러한 작업을 위해 존재한다. staging영역에 넣고 빼는것을 통해 무엇을 커밋하고 무엇을 안할지 결정할수 있다.
 
 
-
-Github앱으로 Merge하는방법
-
-![md image](./images/XsiixhU.png)
-
-위처럼 우측에 마스터를 놓고 좌측에 merge할 브랜치를 드래그해서 놓는다. 머지 후에는 Sync를 눌러야 리모트에 올라간다.
+- storyboard나 xib파일과 같은 복잡한 파일은 과거의 상태로 revert를 하면 버그가 발생할 수 있다. 이 때는 차라리 그 파일을 지워버리고 그 파일만 체크아웃을 하여 재생성하자.
+  - rm something.xib
+  - git checkout something.xib
 
 
-
-#### Github의 커밋 삭제하기
-
-터미널창에 아래와 같이 입력하면 리모트(깃허브)의 커밋이 하나 삭제된다. (두개를 삭제하려면 HEAD^^ 로 바꾸면 된다.)
+- xcode상에서 파일명을 변경하지 말자.
 
 ```shell
-git push -f origin HEAD^:master
+> git mv 원본파일명 새파일명
 ```
 
-
-SourceTree를 이용하여 로컬에서도 해당 커밋위치로 soft reset을 해주면된다.
-
-
-http://stackoverflow.com/a/449070
-
-
-#####github desktop 어플을 이용하는 방법
-단, 이 방법은 위와는 달리 커밋을 삭제하는게 아니다. revert를 하는것이다. 즉, 역 커밋을 넣음으로써 원상복구하는 방식으므로 이미 다른 유저가 해당코드를 포크했을때 유용하다.
-
-![md image](./images/ss1.jpg)
+의 명령으로 파일명을 바꾸자. 그래야 git상에서 파일의 동일성이 유지됨. 
 
 
 
 
 
+
+
+
+
+## [Git FAQ](file:///Users/monadis/Documents/iOS_Dev/Github Repo Clone/monadis.github.io/git FAQ.md)
+
+## [Github](file:///Users/monadis/Documents/iOS_Dev/Github Repo Clone/monadis.github.io/github.md)
 
 

@@ -1,4 +1,8 @@
-# Debugging with Xcode
+# XCode
+
+
+
+## Debugging with Xcode
 
 
 
@@ -21,8 +25,14 @@
 - LLDB Python scripting : 새 디버그 기능을 만들기
 - REPL : 코드 집어넣기
 - playground : 코드를 실험해보기
+- static analyzer : 정적 코드 오류를 검사한다. Objective-C코드를 작성할때 retain한 객체를 release를 시켜줬는지 따위를 알아내는것을 도와준다. 객체를 선언만하고 사용하지 않았을경우도 알려준다.
+  -   Swift에서는 static analyzer기능을 사용할수 없다. Objective-C코드에서만 작동한다. (사실 별 필요가 없는것같기도 하다. 대부분 일반적인 빌드로 나쁜코드가 다 검출된다.)
 
-##Playground
+
+
+
+
+## Playground
 
 ####[작성방법 참고 사이트](http://hiddenviewer.tistory.com/272)
 
@@ -36,7 +46,20 @@
 
 중요한점은 workspace를 만들어서 framework project를 넣고 좌하단의 +버튼을 눌러서 playground를 추가하는것.
 
-####시뮬레이터 사용없이 테이블뷰를 테스트하는법
+
+
+#### 소스코드 파일 넣는 법
+
+<img src="./images/0E7C7DCE-7EEB-49CD-8516-A629A2D91726.png" style="zoom:100%;" />
+
+**단, swift는 public접근자를 각 클래스와 함수 앞에 달아줘야만 플레이그라운드상에서 인식이 가능하다.**
+또 하나, 플레이그라운드에서는 위에서 아래로 순차적으로 코드를 읽어들인다. 따라서 이 순서가 맞아야만 컴파일이 된다.
+
+이미지 등의 리소스 파일은 `Resources` 폴더내에넣으면됨.
+
+
+
+#### 시뮬레이터 사용없이 테이블뷰를 테스트하는법
 
 WWDC2014의 swift playgrounds 영상을 보면 나오는데, 먼저 데이터소스 클래스를 구현한다. 그 다음에 테이블뷰 객체를 생성한다. 데이터소스객체를 테이블뷰 객체에 연결시키면 된다.
 
@@ -90,23 +113,27 @@ $ xcrun swift    #(그냥 swift만 쳐도 됨. 차이가 뭔지 모르겠다)
 
 REPL에서는 동일한 변수명으로 재정의를 하는걸 (디버깅 편의상의 이유로)허용한다. 과거의 정의는 덮어씌워져서 사라진다.  함수의 재정의도 가능하다. 근데 이때 문제가 발생한다. 덮어씌울때는 overload는 어떻게 구분할 것인가?
 
-
  https://developer.apple.com/swift/blog/?id=20
 
 
 
-### 스토리 보드
+## <a href="./Xcode Storyboard.md">Storyboard</a>
 
-IBOutlet에서 로드되는 객체는 init도중에는 아직 nil 상태다. 따라서 awakeFromNib에서 커스터마이징해야 한다.
+
+
+
+
+## Continuous Integration (작성중)
+
+http://bigmatch.i-um.net/2014/02/xcode-bots-%EC%A0%81%EC%9A%A9/
+
+앱은 테스트를 위해서도 일단 배포를 해야 한다. 하지만 배포도 참 귀찮은 작업이다. 일일이 컴퓨터에 연결해 깔아주기 쉽지않다.  자동으로 업로드하여 이메일로 배포를 하는 시스템이 있으면 좋을것이다. 또한 업로드가 제대로 되었는지 확인도 해야 할것이다. 즉, 업로드한 코드를 다시 빌드해서 테스트 하는 작업이 필요해졌다.  결국 정적분석, 빌드, 유닛테스트, 아카이브까지를 이 과정에 넣어버리는게 효율적이라는 결론에 도달했다. 이것이 CI가 되었다.
+
+
 
 
 
 ## ⚠️유의점
 
-1. 개발 폴더는 한글이나 공백문자는 들어가지 않게 하자. framework path를 인식못하는 버그가 있다.
-
-   예: `iOS Dev`라는 폴더의 하위에 프로젝트를 만들어서 잘못된 결과가 되었다.
-
-2. ㅁㄴㅇㄹ
-
-3. ​
+- 개발 폴더는 한글이나 공백문자는 들어가지 않게 하자. framework path를 인식못하는 버그가 있다.
+  예: `iOS Dev`라는 폴더의 하위에 프로젝트를 만들어서 잘못된 결과가 되었다.
